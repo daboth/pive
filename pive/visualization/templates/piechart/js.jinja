@@ -1,0 +1,137 @@
+// Copyright (c) 2014, David Bothe
+// All rights reserved.
+
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+
+// 1. Redistributions of source code must retain the above copyright notice,
+// this list of conditions and the following disclaimer.
+
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+// this list of conditions and the following disclaimer in the documentation
+// and/or other materials provided with the distribution.
+
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
+var width = {{ t_width }};
+var height = {{ t_height }};	
+var padding	= {{ t_padding }};
+var labelsize = 16;
+var datakeys = {{ t_datakeys }};
+var url = '{{ t_url }}';
+var colors = {{ t_colors }};
+var highlightopacity = {{ t_highlightopacity}};
+
+d3.json(url, function(data){
+	//The complete dataset.
+	var dataset = data;
+	console.log(dataset);
+	console.log([dataset]);
+
+	var radius;
+	if (width < height){
+		radius = (width - padding) / 2;
+	} else {
+		radius = (height - padding) / 2;
+	}
+	
+	console.log(dataset);
+
+	var total = d3.sum(dataset, function(d){
+		return d.value;
+	});
+
+	var percentformat = d3.format("0.1%");
+
+	console.log(total);
+    var tooltip = d3.select("body").append("div")
+		    .attr("class", "tooltip")
+		    .style("opacity", "0.0")
+		    .style("position", "absolute")
+		    .style("top", 0 + "px");
+
+    //Drawing the initial SVG containing the chart by selecting the body element of the DOM
+	//and appending a svg tag with the following attributes. The selection is saved as a variable
+	//for later reference.
+	var svg = d3.select("body").append("svg")
+				.datum(dataset)
+				.attr("width", width)							
+				.attr("height", height);
+
+    var arc = d3.svg.arc().outerRadius(radius);
+    var pie = d3.layout.pie().value(function(d) {
+    	return d.value;
+    });
+
+    var arcs = svg.selectAll("g.arc")
+    			  .data(pie)
+    			  .enter()
+    			  .append("g")
+    			  .attr("class", "arc")
+    			  .attr("transform", "translate(" + (radius + padding) + ", " + (radius + padding) + ")");
+
+    arcs.append("path")
+        .attr("fill", function(d, i){
+        	return getColorIndex(i);
+        })
+        .attr("d", arc)
+        .on("mouseover", function(d, i){
+        	var tx = d3.mouse(this)[0];
+        	var ty = d3.mouse(this)[1];
+        	d3.select(this).transition()
+        		           .attr("opacity", highlightopacity);
+        	showTooltip([d.value, dataset[i].label], [tx, ty], i);
+        })
+        .on("mouseout", function(){
+		    	hideTooltip();
+		    	d3.select(this).transition()
+        		           .attr("opacity", 1.0);
+		    });
+
+	
+
+	function getColorIndex(index){
+			var colorindex = index;
+		   	var color;
+
+		   	while (colorindex > colors.length - 1) {
+		   		colorindex = colorindex - colors.length;
+		   	}
+		   	
+		   	color = colors[colorindex];
+		   	return color;
+		}       	
+
+   
+   function hideTooltip(){
+    	tooltip.transition()
+    	.duration(200)
+    	.style("opacity", 0.0)
+    	.style("top", 0 + "px");
+    }
+
+    function showTooltip(values, position, accessor){
+	    	
+	    	tooltip.html((values[1] + ": " + values[0] + "<br><br><center>" + percentformat(values[0] / total)))
+	    		   .style("left", ((position[0] + radius) +  "px"))
+	    		   .transition()
+	    		   .delay(600)
+	    		   .duration(400)
+	    		   .style("opacity", 1.0)
+	    		   .style("position", "absolute")	    		   
+	    		   .style("background-color", getColorIndex(accessor))
+	    		   .style("top", ((position[1] + radius) + "px"));
+
+	    }
+
+});

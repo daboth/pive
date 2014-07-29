@@ -1,0 +1,16 @@
+{
+    "title": "piechart",
+    "min_datapoints": 0,
+    "max_datapoints": 360,
+    "multiple_data": false,
+    "datesupport": false,    
+    "lexical_required": false,
+    "vistypes": [
+        {
+            "value": "number"
+        },
+        {
+            "label": "string"
+        }
+    ]
+}

@@ -1,0 +1,535 @@
+// Copyright (c) 2014, David Bothe
+// All rights reserved.
+
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+
+// 1. Redistributions of source code must retain the above copyright notice,
+// this list of conditions and the following disclaimer.
+
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+// this list of conditions and the following disclaimer in the documentation
+// and/or other materials provided with the distribution.
+
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
+
+var width = {{ t_width }};
+var height = {{ t_height }};	
+var padding	= {{ t_padding }};
+var labelsize = 16;
+var viewport = {{ t_viewport }};	
+var jumplength = {{ t_jumplength }};
+var xlabel = '{{t_xlabel}}';
+var ylabel = '{{t_ylabel}}';
+var datakeys = {{ t_datakeys }};
+var timeformat = '{{ t_timeformat }}';
+var iconwidth = {{ t_iconwidth }};
+var iconheight = {{ t_iconheight }};
+var iconcolor = '{{ t_iconcolor }}';
+var iconhighlight = '{{ t_iconhighlight }}';
+var url = '{{ t_url }}';
+var iso = d3.time.format.utc('{{ t_iso }}');
+var scales = {{ t_scales }};
+var colors = {{ t_colors }};
+var tickrotation = -45;
+var highlightradius = 8;
+var circleradius = {{ t_circleradius }};
+var highlightfactor = {{ t_highlightfactor }};
+var circleopacity = {{ t_circleopacity }};
+
+
+d3.json(url, function(data){
+	//The complete dataset.
+	var dataset = data;
+	//The current offset starting at zero.
+	var current_offset = 0;
+	//Define the viewport of the data. Only a slice of the full dataset is currently shown.
+    var viewdata = dataset.slice(current_offset, current_offset + viewport);
+    
+    //Determines the maximum y-value considering each datapoints maximum.
+    var max_y = d3.max(data, function(d){
+    	var datapoint_max = d.y[0];
+    	for (var i = 0; i < d.y.length; i++)
+    		if (d.y[i] > datapoint_max){
+    			datapoint_max = d.y[i];
+    		}
+		return datapoint_max;
+    });
+
+    //Determines the minimum y-value considering each datapoints minimum.
+    var min_y = d3.min(data, function(d){
+    	var datapoint_min = d.y[0];
+    	for (var i = 0; i < d.y.length; i++)
+    		if (d.y[i] < datapoint_min){
+    			datapoint_min = d.y[i];
+    		}
+		return datapoint_min;
+    });
+
+    //The extent of all datapoint values consists of their minima and maxima.
+    var x_extent = d3.extent(viewdata, function(d){ return d.x});
+    var y_extent = [min_y, max_y];
+    console.log(y_extent);
+    console.log(x_extent);
+    var xScale;
+    var yScale;
+    var yAxisScale;
+
+    scaleXAxis();
+    scaleYAxis();
+   
+    //Creates a new date object of a given timestamp.
+    function getDateFromTime(time){
+    	try {
+    		return new Date(time);	
+    	} catch (err) {
+    		console.log("An Error occured while parsing the date object.");
+    		console.log(err.message);
+    		return null;
+    	};
+    	
+    };
+
+    function scaleXAxis(){			    	
+    	//###################################
+    	//######## scale the x-axis. ########
+    	//###################################
+    	var xrange = [padding + labelsize + iconwidth, width - padding];
+
+    	if (scales[0] == 'linear') {
+    		//Provide a linear scaling.
+    		xScale = d3.scale.linear()
+        			   .range(xrange)          			   
+        			   .domain(x_extent);
+
+    	} else if (scales[0] == 'log') {
+    		if (x_extent[0] <= 0){
+    			xScale = d3.scale.linear()
+        			   .range(xrange)          			   
+        			   .domain(x_extent);
+    			
+    		} else {
+    			xScale = d3.scale.log()
+        			   .range(xrange)          			   
+        			   .domain(x_extent);
+        			}
+
+    		
+    	} else if (scales[0].substring(0,3) == 'pow') {	
+    		
+    		//The exponent of the power scale is indicated by a number
+    		//following the 'pow', e.g. 'pow2'.
+    		//console.log(scales[0].length)
+    		exp = parseInt(scales[0].substring(3, scales[0].length));
+    		
+    		//Provide a power scaling.
+    		xScale = d3.scale.pow()
+    				   .exponent(exp)
+        			   .range(xrange)		   
+        			   .domain(x_extent);
+
+	    } else if (scales[0] == 'date') {
+	    	//Date-code to be implemented.
+	    	var minDate = getDateFromTime(x_extent[0]);
+	    	var maxDate = getDateFromTime(x_extent[1]);
+	    	console.log(minDate.toString());
+	    	console.log(maxDate.toString());
+	    	
+	    	xScale = d3.time.scale()
+	    			   .range(xrange)
+	    			   .domain([minDate, maxDate]);    			    	
+		};
+    };
+
+    function scaleYAxis(){			    	
+    	//###################################
+    	//######## scale the x-axis. ########
+    	//###################################
+    	if (scales[1] == 'linear') {
+    		//Provide a linear scaling.
+    		yScale = d3.scale.linear()
+    			   .range([padding + labelsize, height - padding])
+    			   .domain(y_extent);
+		    yAxisScale = d3.scale.linear()
+    			   .range([height - padding, padding + labelsize])
+    			   .domain(y_extent);
+
+    	} else if (scales[1] == 'log') {
+    		if (y_extent[0] <= 0){    			
+    			yScale = d3.scale.linear()
+    			   .range([padding + labelsize, height - padding])
+    			   .domain(y_extent);
+		    	yAxisScale = d3.scale.linear()
+    			   .range([height - padding, padding + labelsize])
+    			   .domain(y_extent);
+    		} else {
+    			yScale = d3.scale.log()
+        			   .range([padding + labelsize, height - padding])         			   
+        			   .domain(y_extent);
+		    	yAxisScale = d3.scale.log()
+        			   .range([height - padding, padding + labelsize])         			   
+        			   .domain(y_extent);
+    		}
+    		
+    	} else if (scales[1].substring(0,3) == 'pow') {	
+    		
+    		//The exponent of the power scale is indicated by a number
+    		//following the 'pow', e.g. 'pow2'.
+    		exp = parseInt(scales[1].substring(3, scales[1].length));
+    		
+    		//Provide a power scaling.
+    		yScale = d3.scale.pow()
+    				   .exponent(exp)
+        			   .range([padding + labelsize, height - padding])		   
+        			   .domain(y_extent);
+		    yAxisScale = d3.scale.pow()
+    				   .exponent(exp)
+        			   .range([height - padding, padding + labelsize])		   
+        			   .domain(y_extent);
+
+	    } else if (scales[1] == 'date') {
+	    	//Date-code to be implemented.
+	    	var minDate = getDateFromTime(y_extent[0]);
+	    	var maxDate = getDateFromTime(y_extent[1]);
+	    	console.log(minDate.toString());
+	    	console.log(maxDate.toString());
+	    	yScale = d3.time.scale()
+	    			   .range([padding + labelsize, height - padding])
+	    			   .domain([minDate, maxDate]);    	
+		    yAxisScale = d3.time.scale()
+	    			   .range([height - padding, padding + labelsize])
+	    			   .domain([minDate, maxDate]); 		    	
+		};
+    };
+
+    //Drawing the initial SVG containing the chart by selecting the body element of the DOM
+	//and appending a svg tag with the following attributes. The selection is saved as a variable
+	//for later reference.
+	var svg = d3.select("body").append("svg")
+				.attr("width", width)							
+				.attr("height", height);
+
+	var tooltip = d3.select("body").append("div")
+			    .attr("class", "tooltip")
+			    .style("opacity", "0.0")
+			    .style("top", 0 + "px");
+
+	var xaxis = d3.svg.axis();
+	var yaxis = d3.svg.axis();
+
+	//X Axis initialization.
+	function initializeXAxis() {
+
+		if (scales[0] == 'date') {
+			xaxis.ticks(d3.time.milliseconds, 10)
+    		     .tickFormat(d3.time.format(timeformat))			    			
+			     .tickSize(-(height - padding * 2 - labelsize), 0, 0)
+    		     .scale(xScale);
+		} else {
+
+			xaxis.tickSize(-(height - padding * 2 - labelsize), 0, 0)	    					
+			     .scale(xScale);
+		};					
+	};
+
+	function initializeYAxis() {
+		yaxis.orient('left')	    			
+    		 .scale(yAxisScale);
+
+	};
+
+    initializeXAxis();		
+    initializeYAxis();		    			
+
+	var xa = svg.append('g')
+			   .attr('class', 'x axis')
+			   .attr('transform', 'translate(0, ' + (height - padding - labelsize) + ')')
+			   .data(viewdata)
+			   .call(xaxis)
+			   .selectAll("text")  
+	            .style("text-anchor", "end")
+	            .attr("dx", "-.8em")
+	            .attr("dy", ".15em")
+	            .attr("transform", function(d) {
+	                return "rotate(" + tickrotation + ")" 
+	                });
+
+	var ya = svg.append('g')
+			   .attr('class', 'y axis')
+			   .attr('transform', 'translate('+ (padding + labelsize + iconwidth) + ', ' + (-labelsize) + ')')
+			   .data(viewdata)
+			   .call(yaxis);
+
+    var bottom_label = svg.append("text")
+    					  .attr("class", "x label")
+    					  .attr("x", (width / 2) + (padding / 2))
+    					  .attr("y", height)
+    					  .style("text-anchor", "middle")
+    					  .style("font-size", labelsize)
+    					  .text(xlabel);
+
+    var left_label = svg.append("text")
+   						  .attr("class", "y label")
+    					  .attr("transform", "rotate(-90)")
+				  		  .attr("x", (- height / 2) + (padding / 2))
+    					  .attr("y", 0)
+    					  .attr("dy", "1em")
+    					  .style("text-anchor", "middle")
+    					  .style("font-size", labelsize)
+    					  .text(ylabel);
+
+	function drawButtons(){
+		//Append the buttons.
+	    var buttons = svg.append("g")			    	
+	    				 .attr("class", "button")
+
+	    var vertical_center = (height / 2) - (padding / 2) - (iconheight / 2);
+
+	   	//Prepare the transformation.
+	    var right_translation = 'translate(' + (width - iconwidth) + ',' + (vertical_center) + ')';
+	    var left_translation = 'translate(' + (iconwidth + 10 + labelsize) + ',' + (vertical_center) + ')';
+
+		//Append the right arrow button and apply its transformation.
+		buttons.append("path")		    		
+			.attr('d', 'm 0 0 0 ' + iconheight + ' ' + iconwidth + ' -' + iconheight / 2 + 'z')			       
+	        .attr('transform', right_translation)			        
+	        .attr('fill', iconcolor)
+	        .on("click", function() {					  		
+			  		forwardData();
+			})
+			.on('mouseover', function() {
+				d3.select(this).attr('fill', iconhighlight);
+			})
+			.on('mouseout', function() {
+				d3.select(this).attr('fill', iconcolor);
+			});
+		
+		//Append the left arrow button and apply its transformation.
+		buttons.append("path")		    		
+			.attr('d', 'm 0 0 0 ' + iconheight + ' -' + iconwidth + ' -' + iconheight / 2 + 'z')
+	        .attr('transform',  left_translation)
+	        .attr('fill', iconcolor)
+	        .on("click", function() {					  		
+			  		backwardData();
+			})
+			.on('mouseover', function() {
+				d3.select(this).attr('fill', iconhighlight);
+			})
+			.on('mouseout', function() {
+				d3.select(this).attr('fill', iconcolor);
+			});	
+
+	}
+
+	if (viewport > viewdata.length){
+		viewport = viewdata.length;
+	} else {
+		drawButtons();
+	}
+	
+	
+	function updateXAxis(new_extent) {
+
+		if (scales[0] == 'date') {
+			var minDate = iso(getDateFromTime(new_extent[0]));
+	    	var maxDate = iso(getDateFromTime(new_extent[1]));
+			xScale.domain([minDate, maxDate]);
+		} else {
+			xScale.domain(new_extent);
+		}
+		
+	}
+
+	function forwardData() {
+		current_offset += jumplength;
+		
+		if ((current_offset + viewport) > dataset.length) {
+			viewdata = dataset.slice(current_offset, dataset.length);
+			current_offset -= jumplength;
+		} else {
+			viewdata = dataset.slice(current_offset, current_offset + viewport);
+		};
+
+		x_extent = d3.extent(viewdata, function(d){ return d.x});
+
+		
+		if (scales[0] == 'date') {
+			var minDate = getDateFromTime(x_extent[0]);
+	    	var maxDate = getDateFromTime(x_extent[1]);
+			xScale.domain([minDate, maxDate]);	
+		} else {
+			xScale.domain(x_extent);
+		};
+		
+		updateView();
+		  			
+	};
+
+	
+	function backwardData() {
+		current_offset -= jumplength;
+		
+		if (current_offset < 0) {
+			viewdata = dataset.slice(0, 0 + viewport);
+			current_offset = 0;
+		} else {
+			viewdata = dataset.slice(current_offset, current_offset + viewport);
+		};
+
+		x_extent = d3.extent(viewdata, function(d){ return d.x});
+
+		
+		if (scales[0] == 'date') {
+			var minDate = getDateFromTime(x_extent[0]);
+	    	var maxDate = getDateFromTime(x_extent[1]);
+			xScale.domain([minDate, maxDate]);	
+		} else {
+			xScale.domain(x_extent);
+		};
+		
+		updateView();
+		  			
+	};
+	
+	
+	function updateView(){
+
+		svg.select(".x.axis")
+    		.transition()
+    		.duration(250)
+    		.call(xaxis)
+    		
+		svg.select(".x.axis")
+			.selectAll("text")  
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", function(d) {
+                return "rotate(" + tickrotation + ")" 
+            });
+
+        svg.selectAll(".circle").remove();
+
+		for (var i = 0; i < viewdata[0].y.length; i++)
+			drawData(i);
+
+	};
+
+	var circles = svg.selectAll("circle");
+
+
+	for (var i = 0; i < viewdata[0].y.length; i++)
+		drawData(i);
+
+	function getColorIndex(y_accessor){
+			var colorindex = y_accessor;
+		   	var color;
+
+		   	while (colorindex > colors.length - 1) {
+		   		colorindex = colorindex - colors.length;
+
+		   	}
+		   	
+		   	color = colors[colorindex];
+		   	return color;
+		}       	
+
+    function drawData(y_accessor){
+    	//If no y_accessor was defined, the data is assumed to contain only one dataset.
+    	//the y_accessor then becomes obsolete.
+    	console.log(scales)
+    	y_accessor = (typeof y_accessor == "undefined") ? "singleData" : y_accessor;
+    	
+	    function drawCircles(index){
+
+	    	circles = svg.append("circle")
+	    			 .datum(viewdata)
+	    			 .attr("class", "circle")
+	    			 .attr('fill', 'white')
+	    			 .transition()
+	    			 .duration(200)
+	    			 .attr("cx", function(d) {
+	    			 	return xScale(d[index].x);
+	    			 })
+	    			 .attr("cy", function(d) {
+	    			 	return height - yScale(d[index].y[y_accessor]);
+	    			 })
+	    			 .attr("r", circleradius)
+	    			 .attr("xvalue", function(d){
+	    			 	return d[index].x;
+	    			 })
+	    			 .attr("yvalue", function(d){
+	    			 	return d[index].y[y_accessor];
+	    			 })
+	    			 .attr("y_accessor", y_accessor)
+	    			 .attr("opacity", circleopacity)
+	    			 .attr("fill", getColorIndex(y_accessor));	    		
+	    }
+		
+		for (var i = 0; i < viewdata.length; i++)
+			drawCircles(i);
+	    
+	    
+
+	 
+
+	    svg.selectAll("circle")
+	    	.on("mouseover", function(){
+		    	var xvalue = d3.select(this).attr("xvalue");
+		    	var yvalue = d3.select(this).attr("yvalue");
+		    	var circlex = d3.select(this).attr("cx");
+		    	var circley = d3.select(this).attr("cy");
+		    	var accessor = d3.select(this).attr("y_accessor");
+
+
+		    	var values = [xvalue, yvalue];
+		    	var position = [circlex, circley];
+		    	var coords = d3.mouse(this);
+
+		    	d3.select(this).transition()
+		    	.duration(500)
+		    	.attr('opacity', (circleopacity / 2))
+		    	.attr('r', highlightfactor)
+		    	.each('end', showTooltip(coords, values, position, accessor));
+		    })
+		    .on("mouseout", function(){
+		    	d3.select(this).transition()
+		    	.attr('opacity', circleopacity)
+		    	.attr('r', circleradius);
+		    	hideTooltip();
+		    });
+    };
+
+   function hideTooltip(){
+    	tooltip.transition()
+    	.duration(200)
+    	.style("opacity", 0.0)
+    	.style("top", 0 + "px");
+    }
+
+    function showTooltip(coords, values, position, accessor){
+	    	var keyindex = parseInt(accessor) + 1;
+	    	
+	    	tooltip.text(datakeys[0] + ": " + values[0] + " " + datakeys[keyindex] + ": " + values[1])
+	    		   .style("left", (position[0] + "px"))
+	    		   .transition()
+	    		   .delay(600)
+	    		   .duration(400)
+	    		   .style("opacity", 1.0)
+	    		   .style("position", "absolute")	    		   
+	    		   .style("background-color", getColorIndex(accessor))
+	    		   .style("top", ((position[1] - (2 * highlightfactor)) + "px"));
+
+	    }
+
+});

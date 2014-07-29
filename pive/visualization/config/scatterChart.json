@@ -1,0 +1,19 @@
+{
+    "title": "scatterchart",
+    "min_datapoints": 0,
+    "max_datapoints": "inf",
+    "multiple_data": true,
+    "datesupport": true,
+    "lexical_required": false,
+    "vistypes": [
+        {
+            "x": [
+                "number",
+                "time"
+            ]
+        },
+        {
+            "y": "number"
+        }
+    ]
+}

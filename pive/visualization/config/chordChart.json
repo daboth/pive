@@ -1,0 +1,19 @@
+{
+    "title": "chordchart",
+    "min_datapoints": 0,
+    "max_datapoints": "inf",
+    "multiple_data": false,
+    "datesupport": false,    
+    "lexical_required": false,
+    "vistypes": [
+        {
+            "from": "string"
+        },
+        {
+            "to": "string"
+        },
+        {
+            "weight": "number"
+        }
+    ]
+}
