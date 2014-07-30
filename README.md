@@ -1,13 +1,15 @@
 ![pive Logo](/artwork/pive_logo_optimized_100x100.png)
-Format: ![Alt Text](url)
 
-Python Interactive Visualization Environment (alt: *p-ive* or preferably *pive*)
+
+Python Interactive Visualization Environment
 =====
 
-current version: 0.21
+(alternative titles: *p-ive* or preferably **pive**)
 
 python-ive
 [ˈpaiθən-ˈaivi]
+
+current version: 0.21
 
 What is pive?
 
