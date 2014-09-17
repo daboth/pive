@@ -23,14 +23,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pive.visualization.colorthemes as colorthemes
+from pive.visualization import colorthemes
+import sys
 
 ####################
 ## Meta Data #######
 ####################
 title = 'pivechart'
+# Used to locate the modules with dotted namespace.
+module_path = 'pive.visualization'
+# Filepath to the template folder.
 template_path = 'pive/visualization/templates'
-output_path = 'output'
+# Path where pive will create the standard output.
+output_path = '%s/output' % (sys.path[0])
+# Path where pive locates the visualizations config file.
+config_path = 'pive/visualization/config/'
 
 ####################
 ## Default Values ##

@@ -23,10 +23,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import pive.inputreader as reader
-import pive.datavalidater as validater
-import pive.consistenceprofiler as profiler
-import pive.visualizationmapper as vizmapper
+from . import inputreader as reader
+from . import datavalidater as validater
+from . import consistenceprofiler as profiler
+from . import visualizationmapper as vizmapper
 
 notConsistentErrorMsg = "Data is not consistent."
 

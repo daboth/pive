@@ -25,8 +25,6 @@
 
 import json
 import csv
-import sys
-import io
 from collections import OrderedDict
 
 def loadInputFile(input_source):

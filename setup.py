@@ -6,6 +6,8 @@ except ImportError:
 setup(
 	name = 'pive',
 	packages = ['pive'],
+	#package_data = {'pive': ['visualization/*']},
+	package_dir={'': 'visualization'},
 	version = '0.2.1',
 	url = 'python-ive.org',
 	license = 'BSD',
@@ -16,10 +18,10 @@ setup(
 	classifiers = [
 		'Programming Language :: Python',
 		'Programming Language :: Python :: 3',
-		'Licence :: OSI Approved :: BSD Licence',
+		'License :: OSI Approved :: BSD License',
 		'Operating System :: OS Independent',
 		'Development Status :: 4 - Beta',
-		'Intended Audience :: Developers,',
+		'Intended Audience :: Developers',
 		'Environment :: Web Environment',		
 		'Topic :: Scientific/Engineering :: Visualization',
 		'Topic :: Software Development :: Libraries :: Python Modules'

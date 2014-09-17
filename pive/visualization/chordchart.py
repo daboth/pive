@@ -24,13 +24,10 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import jinja2
-import pive.visualization.defaults as default
 import os
 import json
-import pive.visualization.basevisualization as bv
-import pive.visualization.viewportvisualization as vv
-import pive.visualization.customscalesvisualization as csv
-from collections import OrderedDict
+from pive.visualization import defaults as default
+from pive.visualization import basevisualization as bv
 
 class Chart(bv.BaseVisualization):
 	def __init__(self,

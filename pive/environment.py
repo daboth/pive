@@ -25,81 +25,94 @@
 
 import sys
 import importlib
-import pive.visualization.defaults as default
+from .visualization import defaults as default
 
 
-#Bundles all essential access methods to render visualizations.
+
+# Bundles all essential access methods to render visualizations.
 class Environment():
-	# Contains all suitable visualizations. Only those
-	# visualizations are imported and it is not
-	# allowed to render unsuited visualizations.
-	__suitables = []
-	__data = []
+    # Contains all suitable visualizations. Only those
+    # visualizations are imported and it is not
+    # allowed to render unsuited visualizations.
+    __suitables = []
+    __data = []
 
-	# The acual visualization modules.
-	__modules = []
+    # The acual visualization modules.
+    __modules = []
 
-	__hasDates = False
+    __hasDates = False
 
-	__datakeys = []
+    __datakeys = []
 
-	# The Environment needs an input manager instance to work, but is optional
-	# at creation. Leaving the user to configure the input manager first.
-	def __init__(self, inputmanager=None, outputpath=default.output_path):
-		self.__inputmanager = inputmanager
-		self.__outputpath = outputpath
+    # The Environment needs an input manager instance to work, but is optional
+    # at creation. Leaving the user to configure the input manager first.
+    def __init__(self, inputmanager=None, outputpath=default.output_path):
+        self.__inputmanager = inputmanager
+        self.__outputpath = outputpath
 
-	# Set the output path of all visualization files.
-	def setOutputPath(outputpath):
-		self.__outputpath = outputpath
+    # Set the output path of all visualization files.
+    def setOutputPath(outputpath):
+        self.__outputpath = outputpath
 
-	# Change the internal input manager instance
-	def setInputManager(self, inputmanager):
-		self.__inputmanager = inputmanager
+    # Change the internal input manager instance
+    def setInputManager(self, inputmanager):
+        self.__inputmanager = inputmanager
 
-	# Load the dataset utilizing the internal input manager.
-	def load(self, source):
-		"""Loads data from a source."""
-		inputdata = self.__inputmanager.read(source)
-		self.__suitables = self.__inputmanager.map(inputdata)
-		self.__modules = self.importSuitableVisualizations(self.__suitables)
-		self.__data = inputdata		
-		self.__hasDates = self.__inputmanager.hasDatePoints()
-		self.__datakeys = list(self.__data[0].keys())
-		return self.__suitables
+    # Load the dataset utilizing the internal input manager.
+    def load(self, source):
+        """Loads data from a source."""
+        inputdata = self.__inputmanager.read(source)
+        self.__suitables = self.__inputmanager.map(inputdata)
+        self.__modules = self.importSuitableVisualizations(self.__suitables)
+        self.__data = inputdata
+        self.__hasDates = self.__inputmanager.hasDatePoints()
+        self.__datakeys = list(self.__data[0].keys())
+        return self.__suitables
 
-	# Import all visualization modules.
-	def importSuitableVisualizations(self, suitables):
-		"""Dynamically import all suited visualization files."""		
-		sys.path.append('pive/visualization/')
-		modules = list(map(__import__, suitables))
-		sys.path.remove('pive/visualization/')
-		return modules
+    # Import all visualization modules.
+    def importSuitableVisualizations(self, suitables):
+        """Dynamically import all suited visualization files."""
+        print ("SYSTEMPATH")
+        print (sys.path[0])
 
-	# Choose a chart to start modifying or render it.
-	def choose(self, chart):
-		"""Choose a chart from the suitable visualizations."""
-		if chart not in self.__suitables:
-			raise ValueError ("Visualization not allowed.")
+        mods = []
+        for item in suitables:
+            mod = '.%s' % item
+            mods.append(mod)
 
-		# Automatically create the chart instance and
-		# return it to the user.
-		index = self.__suitables.index(chart)
-		modname = self.__modules[index].__name__
-		module = self.__modules[index]
-		
-		class_ = getattr(module, "Chart")
+        modules = []
 
-		# When dates occur the constructor is called differently.
-		if (self.__hasDates):
-			mychart = class_(self.__data, modname, times=True)
-		else:
-			mychart = class_(self.__data, modname)
+        for item in mods:
+            modules.append(importlib.import_module(item, package=default.module_path))
 
-		mychart.setDataKeys(self.__datakeys)
-		return mychart		
+        print (modules)
 
-	# Render the chart by creating all visualization files.
-	def render(self, chart):
-		"""Render the chart."""
-		chart.createVisualizationFiles(self.__outputpath)
+        return modules
+
+    # Choose a chart to start modifying or render it.
+    def choose(self, chart):
+        """Choose a chart from the suitable visualizations."""
+        if chart not in self.__suitables:
+            raise ValueError("Visualization not allowed.")
+
+        # Automatically create the chart instance and
+        # return it to the user.
+        index = self.__suitables.index(chart)
+        modname = self.__suitables[index]
+        module = self.__modules[index]
+
+        class_ = getattr(module, "Chart")
+
+        # When dates occur the constructor is called differently.
+        if (self.__hasDates):
+            mychart = class_(self.__data, modname, times=True)
+        else:
+            mychart = class_(self.__data, modname)
+
+        mychart.setDataKeys(self.__datakeys)
+        return mychart
+
+    # Render the chart by creating all visualization files.
+    def render(self, chart):
+        """Render the chart."""
+        chart.createVisualizationFiles(self.__outputpath)
