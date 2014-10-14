@@ -33,11 +33,11 @@ title = 'pivechart'
 # Used to locate the modules with dotted namespace.
 module_path = 'pive.visualization'
 # Filepath to the template folder.
-template_path = 'pive/visualization/templates'
+template_path = '/templates/'
 # Path where pive will create the standard output.
 output_path = '%s/output' % (sys.path[0])
 # Path where pive locates the visualizations config file.
-config_path = 'pive/visualization/config/'
+config_path = '/visualization/config/'
 
 ####################
 ## Default Values ##

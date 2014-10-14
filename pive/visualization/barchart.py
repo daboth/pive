@@ -34,7 +34,7 @@ from pive.visualization import viewportvisualization as vv
 class Chart(bv.BaseVisualization, vv.ViewportVisualization):
     def __init__(self,
                  dataset,
-                 template_url,
+                 template_name,
                  width=default.width,
                  height=default.height,
                  padding=default.padding,
@@ -48,7 +48,8 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         # Metadata
         self.__title = 'barchart'
         self.__dataset = dataset
-        self.__template_url = template_url
+        realpath = os.path.dirname(os.path.realpath(__file__))
+        self.__template_url = '%s%s%s' % (realpath, default.template_path, template_name)
         self.__datakeys = []
 
         # Visualization properties.
@@ -174,6 +175,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         print ('Writing: %s' % (dest_file))
 
         for line in output:
+            #f.write(line.encode('utf-8'))
             f.write(line)
 
         f.close()

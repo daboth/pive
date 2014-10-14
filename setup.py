@@ -1,13 +1,12 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
+from setuptools import setup, find_packages
+
 
 setup(
 	name = 'pive',
-	packages = ['pive'],
-	#package_data = {'pive': ['visualization/*']},
-	package_dir={'': 'visualization'},
+	packages = find_packages(),
+	package_data = {'pive': ['visualization/*']},
+	#package_dir={'': 'visualization'},
+	#include_package_data=True
 	version = '0.2.1',
 	url = 'python-ive.org',
 	license = 'BSD',

@@ -24,31 +24,41 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 def getDatapointTypes(datapoint):
-	"""Determines the datas visualization-types of a given datapoint.
+    """Determines the datas visualization-types of a given datapoint.
 	Valid visualization-types are 'number', 'string' and 'time'"""
-	types = []
-	for key in list(datapoint.keys()):
+    types = []
+    for key in list(datapoint.keys()):
 
-		item = datapoint[key]
-		if str(key).endswith("date") or str(key).endswith("time"):
-			types.append("time")
+        item = datapoint[key]
+        if str(key).endswith("date") or str(key).endswith("time"):
+            types.append("time")
 
-		elif isfloat(item) or isint(item):
-			types.append("number")
+        elif isfloat(item) or isint(item):
+            types.append("number")
 
-		elif type(item) == (type(u'string') or type('string')):
-			types.append("string")
-		else:
-			types.append(type(item))	
-	return types 
+        # Python 3 string determination.
+        elif isinstance(item, (str)):
+            types.append("string")
+        # Python 2.7 workaround to determine strings.
+        # Basestring was deprecated in Python 3.
+        else:
+            try:
+                if isinstance(item, basestring):
+                    types.append("string")
+            except TypeError:
+                pass
+
+    return types
+
 
 def isfloat(value):
     try:
-    	number = float(value)
+        number = float(value)
     except ValueError:
         return False
     else:
         return True
+
 
 def isint(value):
     try:
@@ -59,15 +69,16 @@ def isint(value):
     else:
         return num_a == num_b
 
+
 def checkConsistency(input_data):
-	"""Checks the consistency of the dataset. Each item
+    """Checks the consistency of the dataset. Each item
 	must contain the exact datapoint-type as the other."""
-	if input_data:
-		current = getDatapointTypes(input_data[0])
-		for item in input_data[1:]:			
-			previous = current
-			current = getDatapointTypes(item)
-			if previous != current:
-				return False
-	return True
+    if input_data:
+        current = getDatapointTypes(input_data[0])
+        for item in input_data[1:]:
+            previous = current
+            current = getDatapointTypes(item)
+            if previous != current:
+                return False
+    return True
 

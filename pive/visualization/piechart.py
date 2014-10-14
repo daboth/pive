@@ -29,160 +29,160 @@ import json
 from pive.visualization import defaults as default
 from pive.visualization import basevisualization as bv
 
+
 class Chart(bv.BaseVisualization):
-	def __init__(self,
-		         dataset,
-		         template_url,
-				 width=default.width,
-				 height=default.height,
-				 padding=default.padding):
-	
-		#Initializing the inherited pseudo-interfaces.
-		bv.BaseVisualization.__init__(self)
+    def __init__(self,
+                 dataset,
+                 template_name,
+                 width=default.width,
+                 height=default.height,
+                 padding=default.padding):
 
-		# Metadata
-		self.__title = 'piechart'
-		self.__dataset = dataset
-		self.__template_url = template_url
-		self.__datakeys = []		
-		
-		# Visualization properties.
-		self.__width =  width
-		self.__height = height
-		self.__padding = padding
-			
-		self.__colors = default.chartcolors
+        # Initializing the inherited pseudo-interfaces.
+        bv.BaseVisualization.__init__(self)
 
-		self.__highlightopacity = default.circleopacity
-	
-		
-	def setTitle(self, title):
-		self.__title = title
+        # Metadata
+        self.__title = 'piechart'
+        self.__dataset = dataset
+        realpath = os.path.dirname(os.path.realpath(__file__))
+        self.__template_url = '%s%s%s' % (realpath, default.template_path, template_name)
+        self.__datakeys = []
 
-	def setDataKeys(self, datakeys):
-		self.__datakeys = datakeys
+        # Visualization properties.
+        self.__width = width
+        self.__height = height
+        self.__padding = padding
 
-	def sethighlightOpacity(self, opacity):
-		self.__highlightopacity = opacity
+        self.__colors = default.chartcolors
 
-	def setChartColors(self, colors):
-		"""Basic Method."""
-		self.__colors = colors
-
-	def generateVisualizationDataset(self, dataset):
-		"""Basic Method."""
-		visdataset = []
-				
-		for datapoint in dataset:
-			visdatapoint = {}
-			points = list(datapoint.keys())
-			visdatapoint['value'] = datapoint[points[0]]
-			visdatapoint['label'] = datapoint[points[1]]
-			visdataset.append(visdatapoint)
-		return visdataset
-
-	def writeDatasetFile(self, dataset, destination_url, filename):
-		dest_file = '%s%s' % (destination_url, filename)
-		outp = open(dest_file, 'w')
-		json.dump(dataset ,outp, indent=2)
-		outp.close()
-		print ('Writing: %s' % (dest_file))
-		
-	def setScales(self, scales):
-		self.__scales = scales
-
-	def createCSS(self, template):
-		templateVars = {}
-		outputText = template.render(templateVars)
-		return outputText
-
-	def createHTML(self, template):
-		templateVars = { 't_title' : self.__title }
-
-		outputText = template.render(templateVars)
-		return outputText		
-
-	def createJS(self, template, dataset_url):
-		templateVars = { 't_width' : self.__width,
-						 't_height' : self.__height,
-						 't_padding' : self.__padding,						
-						 't_datakeys' : self.__datakeys,
-						 't_url' : dataset_url,						
-						 't_colors' : self.__colors,
-						 't_highlightopacity' : self.__highlightopacity}
-
-		outputText = template.render(templateVars)
-		return outputText
-
-	def writeFile(self, output, destination_url, filename):
-		
-		dest_file = '%s%s' % (destination_url, filename)
-		
-		if not os.path.exists(destination_url):
-			print ("Folder does not exist. Creating folder '%s'. " % (destination_url))
-			os.makedirs(destination_url)
-
-		f = open(dest_file, 'w')
-
-		print ('Writing: %s' % (dest_file))
-
-		for line in output:
-			f.write(line)
-
-		f.close()
+        self.__highlightopacity = default.circleopacity
 
 
-	def createVisualizationFiles(self, destination_url):
-		html_template = self.loadTemplate('%s/html.jinja' % (self.__template_url))
-		css_template = self.loadTemplate('%s/css.jinja' % (self.__template_url))
-		js_template = self.loadTemplate('%s/js.jinja' % (self.__template_url))
+    def setTitle(self, title):
+        self.__title = title
 
-		dataset_url = '%s.json' % (self.__title)
+    def setDataKeys(self, datakeys):
+        self.__datakeys = datakeys
 
-		js = self.createJS(js_template, dataset_url)
-		html = self.createHTML(html_template)
-		css = self.createCSS(css_template)
+    def sethighlightOpacity(self, opacity):
+        self.__highlightopacity = opacity
 
-		
+    def setChartColors(self, colors):
+        """Basic Method."""
+        self.__colors = colors
 
-		self.writeFile(html, destination_url, '/%s.html' % (self.__title))		
-		self.writeFile(css, destination_url, '/%s.css' % (self.__title))
-		self.writeFile(js, destination_url, '/%s.js' % (self.__title))
+    def generateVisualizationDataset(self, dataset):
+        """Basic Method."""
+        visdataset = []
 
-		visdata = self.generateVisualizationDataset(self.__dataset)
-		self.writeDatasetFile(visdata, destination_url, '/%s.json' % (self.__title))
-			
+        for datapoint in dataset:
+            visdatapoint = {}
+            points = list(datapoint.keys())
+            visdatapoint['value'] = datapoint[points[0]]
+            visdatapoint['label'] = datapoint[points[1]]
+            visdataset.append(visdatapoint)
+        return visdataset
 
-	def setHeight(self, height):
-		"""Basic method for height driven data."""
-		if not isinstance(height, int):
-			raise ValueError("Integer expected, got %s instead." % (type(height)))
-		if(height <= 0):
-			print ("Warning: Negative or zero height parameter. Using default settings instead.")
-			height = default.height
-		self.__height = height
+    def writeDatasetFile(self, dataset, destination_url, filename):
+        dest_file = '%s%s' % (destination_url, filename)
+        outp = open(dest_file, 'w')
+        json.dump(dataset, outp, indent=2)
+        outp.close()
+        print ('Writing: %s' % (dest_file))
 
-	def setWidth(self, width):
-		"""Basic method for width driven data."""
-		if not isinstance(width, int):
-			raise ValueError("Integer expected, got %s instead." % (type(width)))
-		if(width <= 0):
-			print ("Warning: Negative or zero width parameter. Using default settings instead.")
-			width = default.width
-		self.__width = width
+    def setScales(self, scales):
+        self.__scales = scales
 
-	def setDimension(self, width, height):
-		self.setWidth(width)
-		self.setHeight(height)    	
+    def createCSS(self, template):
+        templateVars = {}
+        outputText = template.render(templateVars)
+        return outputText
 
-	def loadTemplate(self, template_url):
-		templateLoader = jinja2.FileSystemLoader(searchpath=[default.template_path, '/'])
-		print ("Opening template: %s/%s" % (default.template_path, template_url))
+    def createHTML(self, template):
+        templateVars = {'t_title': self.__title}
 
-		templateEnv = jinja2.Environment(loader=templateLoader)
-		TEMPLATE_FILE = template_url
-		template = templateEnv.get_template(TEMPLATE_FILE)
-		return template
+        outputText = template.render(templateVars)
+        return outputText
+
+    def createJS(self, template, dataset_url):
+        templateVars = {'t_width': self.__width,
+                        't_height': self.__height,
+                        't_padding': self.__padding,
+                        't_datakeys': self.__datakeys,
+                        't_url': dataset_url,
+                        't_colors': self.__colors,
+                        't_highlightopacity': self.__highlightopacity}
+
+        outputText = template.render(templateVars)
+        return outputText
+
+    def writeFile(self, output, destination_url, filename):
+
+        dest_file = '%s%s' % (destination_url, filename)
+
+        if not os.path.exists(destination_url):
+            print ("Folder does not exist. Creating folder '%s'. " % (destination_url))
+            os.makedirs(destination_url)
+
+        f = open(dest_file, 'w')
+
+        print ('Writing: %s' % (dest_file))
+
+        for line in output:
+            f.write(line)
+
+        f.close()
+
+
+    def createVisualizationFiles(self, destination_url):
+        html_template = self.loadTemplate('%s/html.jinja' % (self.__template_url))
+        css_template = self.loadTemplate('%s/css.jinja' % (self.__template_url))
+        js_template = self.loadTemplate('%s/js.jinja' % (self.__template_url))
+
+        dataset_url = '%s.json' % (self.__title)
+
+        js = self.createJS(js_template, dataset_url)
+        html = self.createHTML(html_template)
+        css = self.createCSS(css_template)
+
+        self.writeFile(html, destination_url, '/%s.html' % (self.__title))
+        self.writeFile(css, destination_url, '/%s.css' % (self.__title))
+        self.writeFile(js, destination_url, '/%s.js' % (self.__title))
+
+        visdata = self.generateVisualizationDataset(self.__dataset)
+        self.writeDatasetFile(visdata, destination_url, '/%s.json' % (self.__title))
+
+
+    def setHeight(self, height):
+        """Basic method for height driven data."""
+        if not isinstance(height, int):
+            raise ValueError("Integer expected, got %s instead." % (type(height)))
+        if (height <= 0):
+            print ("Warning: Negative or zero height parameter. Using default settings instead.")
+            height = default.height
+        self.__height = height
+
+    def setWidth(self, width):
+        """Basic method for width driven data."""
+        if not isinstance(width, int):
+            raise ValueError("Integer expected, got %s instead." % (type(width)))
+        if (width <= 0):
+            print ("Warning: Negative or zero width parameter. Using default settings instead.")
+            width = default.width
+        self.__width = width
+
+    def setDimension(self, width, height):
+        self.setWidth(width)
+        self.setHeight(height)
+
+    def loadTemplate(self, template_url):
+        templateLoader = jinja2.FileSystemLoader(searchpath=[default.template_path, '/'])
+        print ("Opening template: %s/%s" % (default.template_path, template_url))
+
+        templateEnv = jinja2.Environment(loader=templateLoader)
+        TEMPLATE_FILE = template_url
+        template = templateEnv.get_template(TEMPLATE_FILE)
+        return template
 
 	
 

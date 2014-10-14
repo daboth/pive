@@ -66,14 +66,13 @@ class Environment():
         self.__modules = self.importSuitableVisualizations(self.__suitables)
         self.__data = inputdata
         self.__hasDates = self.__inputmanager.hasDatePoints()
-        self.__datakeys = list(self.__data[0].keys())
+        # Converting the datakeys into strings.
+        self.__datakeys = [str(i) for i in list(self.__data[0].keys())]
         return self.__suitables
 
     # Import all visualization modules.
     def importSuitableVisualizations(self, suitables):
         """Dynamically import all suited visualization files."""
-        print ("SYSTEMPATH")
-        print (sys.path[0])
 
         mods = []
         for item in suitables:
@@ -84,8 +83,6 @@ class Environment():
 
         for item in mods:
             modules.append(importlib.import_module(item, package=default.module_path))
-
-        print (modules)
 
         return modules
 
