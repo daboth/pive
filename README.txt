@@ -10,7 +10,7 @@ create interactive visualizations on the fly.
 python-ive
 [ˈpaiθən-ˈaivi]
 
-current version: 0.2.1
+current version: 0.2.2
 
 
 Common usage is shown in an example:
@@ -49,4 +49,4 @@ Common usage is shown in an example:
 	vizenv.render(mychart)
 
 
-For more information visit `www.python-ive.org <http://www.example.com/foo/bar>`_.
+For more information visit `<https://github.com/daboth/pive>`.

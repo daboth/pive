@@ -4,12 +4,12 @@
 Python Interactive Visualization Environment
 =====
 
-(alternative titles: *p-ive* or preferably **pive**)
-
 python-ive
 [ˈpaiθən-ˈaivi]
 
-current version: 0.21
+(alternative titles: *p-ive* or preferably **pive**)
+
+current version: 0.2.2
 
 What is pive?
 

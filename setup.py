@@ -1,13 +1,11 @@
 from setuptools import setup, find_packages
 
-
 setup(
 	name = 'pive',
-	packages = find_packages(),
-	package_data = {'pive': ['visualization/*']},
-	#package_dir={'': 'visualization'},
-	#include_package_data=True
-	version = '0.2.1',
+	packages = ['pive', 'pive/visualization'],
+	use_2to3 = True,
+	include_package_data=True,
+	version = '0.2.2',
 	url = 'python-ive.org',
 	license = 'BSD',
 	description = 'Interactive visualization tool',
