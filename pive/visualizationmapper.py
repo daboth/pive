@@ -205,11 +205,6 @@ def checkInputOrder(elem, item, props, supportsMultiData):
     if ((dataValCount % eachValCount) != 0):
         isPossible = False
 
-    for item in props[3]:
-        print (item)
-        str(item)
-        print (item)
-
     # Determines the given types.
     if (len(props[3]) >= singleDataLength):
         given_types = props[3][:singleDataLength]

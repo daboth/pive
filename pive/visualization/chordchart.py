@@ -83,22 +83,26 @@ class Chart(bv.BaseVisualization):
         self.__colors = colors
 
     def initMatrixRow(self, elements):
+        """Initializes a matrix row with zero values."""
         mrow = []
-        for elem in elements:
+        for i in range(0, elements):
             mrow.append(0)
         return mrow
 
     def generateAdjacencyMatrix(self, elements, dataset):
+        """Generates the adacency matrix of the graph."""
         matrix = []
-        for elem in elements:
+        for source in elements:
             i = 0
-            mrow = self.initMatrixRow(elements)
+
+            mrow = self.initMatrixRow(len(elements))
 
             for line in dataset:
-                keys = list(line.keys())
-                element = line[keys[0]]
 
-                if elem == element:
+                keys = list(line.keys())
+
+                current_element = line[keys[0]]
+                if source == current_element:
 
                     for dest in elements:
                         if line[keys[1]] == dest:
@@ -117,9 +121,14 @@ class Chart(bv.BaseVisualization):
 
         for item in dataset:
             keys = list(item.keys())
-            element = item[keys[0]]
-            if element not in elements:
-                elements.append(element)
+            # The elements consist of the distinct sources
+            # and destinations.
+            source = item[keys[0]]
+            dest = item[keys[1]]
+            if source not in elements:
+                elements.append(source)
+            if dest not in elements:
+                elements.append(dest)
         matrix = self.generateAdjacencyMatrix(elements, dataset)
 
         visdataset['elements'] = elements

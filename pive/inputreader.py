@@ -27,129 +27,137 @@ import json
 import csv
 from collections import OrderedDict
 
+
 def loadInputFile(input_source):
-	"""Load data from an arbitrary input source. Currently supported:
+    """Load data from an arbitrary input source. Currently supported:
 	JSON, JSON-String, CSV, CSV-String. Returns an empty list if no data
 	is available."""
-	inputdata = []
-	try:
-		inputdata = loadJSON(input_source)
-	except ValueError as e:
-		pass
-	except IOError as e:
-		pass
-	except Exception as e:
-		pass
-	else:
-		return inputdata
-		
-	if not inputdata:
-		try:
-			inputdata = loadJSONString(input_source)
-		except AttributeError as e:
-			pass
-		except ValueError as e:
-			pass
-		except Exception as e:
-			pass
-	
-	if not inputdata:
-		try:
-			inputdata = loadCSV(input_source)
-		except csv.Error as e:
-			pass
-		except IOError as e:
-			pass
-		except Exception as e:
-			pass
+    inputdata = []
+    try:
+        inputdata = loadJSON(input_source)
+    except ValueError as e:
+        pass
+    except IOError as e:
+        pass
+    except Exception as e:
+        pass
+    else:
+        return inputdata
 
-	if  not inputdata:
-		try:
-			inputdata = loadCSVString(input_source)
-		except Exception as e:
-			pass
-	return inputdata
+    if not inputdata:
+        try:
+            inputdata = loadJSONString(input_source)
+        except AttributeError as e:
+            pass
+        except ValueError as e:
+            pass
+        except Exception as e:
+            pass
+
+    if not inputdata:
+        try:
+            inputdata = loadCSV(input_source)
+        except csv.Error as e:
+            pass
+        except IOError as e:
+            pass
+        except Exception as e:
+            pass
+
+    if not inputdata:
+        try:
+            inputdata = loadCSVString(input_source)
+        except Exception as e:
+            pass
+    return inputdata
+
 
 def loadJSON(json_input):
-	"""Load a JSON File."""
-	fp = open(json_input, 'r')
-	inpt = json.load(fp, object_pairs_hook=OrderedDict)
-	return inpt
+    """Load a JSON File."""
+    fp = open(json_input, 'r')
+    inpt = json.load(fp, object_pairs_hook=OrderedDict)
+    return inpt
+
 
 def loadJSONString(json_input):
-	"""Load a JSON-String."""
-	inpt = json.loads(json_input, object_pairs_hook=OrderedDict)
-	return inpt
+    """Load a JSON-String."""
+    inpt = json.loads(json_input, object_pairs_hook=OrderedDict)
+    return inpt
+
 
 def loadCSVString(csv_input):
-	"""Load a CSV-String."""
-	inputstring = csv_input.split('\n')
-	data = []
-	dialect = csv.Sniffer().sniff(csv_input)
-	delimiterchar = dialect.delimiter
-	inputdata = csv.DictReader(inputstring)
-	header = inputdata.fieldnames
+    """Load a CSV-String."""
+    inputstring = csv_input.split('\n')
+    data = []
+    dialect = csv.Sniffer().sniff(csv_input)
+    delimiterchar = dialect.delimiter
+    inputdata = csv.DictReader(inputstring)
+    header = inputdata.fieldnames
 
-	for row in inputdata:
-		od = OrderedDict()
+    for row in inputdata:
+        od = OrderedDict()
 
-		for item in header:
-			value = parseValueType(row[item])
-			od[item] = value
-		data.append(od)
+        for item in header:
+            value = parseValueType(row[item])
+            od[item] = value
+        data.append(od)
 
-	return data
+    return data
+
 
 def UnicodeDictReader(utf8, **kwargs):
-	"""Generator for unicode csv dictionary proccessing."""
-	unic_reader = csv.DictReader(utf8, **kwargs)
-	for row in unic_reader:
-		yield OrderedDict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()])
+    """Generator for unicode csv dictionary proccessing."""
+    unic_reader = csv.DictReader(utf8, **kwargs)
+    for row in unic_reader:
+        yield OrderedDict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()])
 
 
 def loadCSV(csv_input):
-	"""Loads the input from a csv file and returns
+    """Loads the input from a csv file and returns
 	a list of ordered dictionaries for further processing."""
-	data = []
-	csvfile = open(csv_input)
-	csvfile.seek(0)
-	dialect = csv.Sniffer().sniff(csvfile.read())
-	csvfile.seek(0)
-	isHeader = csv.Sniffer().has_header(csvfile.read())
-	csvfile.seek(0)
-    #The delimiter used in the dialect.
-	delimiterchar = dialect.delimiter
+    data = []
+    csvfile = open(csv_input)
+    csvfile.seek(0)
+    dialect = csv.Sniffer().sniff(csvfile.read())
+    csvfile.seek(0)
+    isHeader = csv.Sniffer().has_header(csvfile.read())
+    csvfile.seek(0)
+    # The delimiter used in the dialect.
+    delimiterchar = dialect.delimiter
     #Opens the input file with the determined delimiter.
-	dictreader = csv.DictReader(csvfile, dialect=dialect)
-	
-	header = dictreader.fieldnames
+    dictreader = csv.DictReader(csvfile, dialect=dialect)
+
+    header = dictreader.fieldnames
 
     #Translate the data into a list of dictionaries.
-	for row in dictreader:
+    for row in dictreader:
 
-		od = OrderedDict()
-		for item in header:
-			value = parseValueType(row[item])
+        od = OrderedDict()
+        for item in header:
+            value = parseValueType(row[item])
 
-			od[item] = value
+            od[item] = value
 
-		data.append(od)  
-	return data
+        data.append(od)
+    return data
+
 
 def parseValueType(value):
-	if isint(value):
-		value = int(value)
-	elif isfloat(value):
-		value = float(value)
-	return value
+    if isint(value):
+        value = int(value)
+    elif isfloat(value):
+        value = float(value)
+    return value
+
 
 def isfloat(value):
     try:
-    	number = float(value)
+        number = float(value)
     except ValueError:
         return False
     else:
         return True
+
 
 def isint(value):
     try:
@@ -159,30 +167,3 @@ def isint(value):
         return False
     else:
         return num_a == num_b
-
-
-def loadCSV1(csv_input):
-	"""Loads the input from a csv file and returns
-	a list of ordered dictionaries for further processing."""
-	data = []
-	print ("data = []")
-	print ("Input: ", csv_input)
-
-	#Determines the dialect used in the input file.
-	dialect = csv.Sniffer().sniff(open(csv_input).read())
-	isHeader = csv.Sniffer().has_header(open(csv_input).read())
-
-	#Try to open the CSV File.
-	with open(csv_input, 'rb') as csvfile:
-		line = csvfile.read()
-	    #Resets the cursor position in the input file.
-		csvfile.seek(0)
-	    #Opens the input file with the determined delimiter.
-		dictreader = csv.DictReader(csvfile, dialect=dialect)
-		for row in dictreader:
-			print (row)
-
-	    #Translate the data into a list of dictionaries.
-		for row in dictreader:
-			data.append(OrderedDict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()]))	   
-	return data

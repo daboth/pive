@@ -51,6 +51,7 @@ d3.json(url, function(data){
 	console.log(data.elements);
 	var chordElements = data.elements;
 	var matrix = data.matrix;
+	console.log(matrix)
 
 	function getColorIndex(index){
 			var colorindex = index;
@@ -133,7 +134,6 @@ d3.json(url, function(data){
 	        	return chordColor(d);
 	        })	
 	        .style("stroke", function(d) {
-	        	console.log(chordColor(d));
 	        	return chordColor(d);
 	        })			        
 	        .style("opacity", 0.75); 
@@ -172,7 +172,6 @@ d3.json(url, function(data){
 
 				var colorindex = (d.source.value > d.target.value ?
 	            d.source.index : d.target.index);
-	            console.log(colorindex);
 	        return getColorIndex(colorindex);
 	    }
 	     
