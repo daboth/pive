@@ -30,63 +30,63 @@ from . import visualizationmapper as vizmapper
 
 notConsistentErrorMsg = "Data is not consistent."
 
+
 class InputManager:
-	
-	# Input Managers can try to merge false datapoints or not.
-	def __init__(self, mergedata=False):		
-		self.__mergedata = mergedata
-		self.__containsDates = False
+    # Input Managers can try to merge false datapoints or not.
+    def __init__(self, mergedata=False):
+        self.__mergedata = mergedata
+        self.__containsDates = False
 
-	def read(self, source):
-		"""Reads the input source."""
-		inputdata = reader.loadInputFile(source)
-		dataset = self.__validateInput(inputdata)
-		if not self.__checkConsistency(dataset):
-			raise ValueError (notConsistentErrorMsg)
-		return dataset
+    def read(self, source):
+        """Reads the input source."""
+        inputdata = reader.load_input_source(source)
+        dataset = self.__validate_input(inputdata)
+        if not self.__is_dataset_consistent(dataset):
+            raise ValueError(notConsistentErrorMsg)
+        return dataset
 
-	def map(self, dataset):
-		"""Maps the dataset to supported visualizations."""
-		viztypes = self.__getVisualizationTypes(dataset)
-		properties = vizmapper.getVisualizationProperties(dataset, viztypes)
-		suitables = vizmapper.checkPossibilities(properties)
-		self.__containsDates = vizmapper.hasDate(viztypes)
-		return suitables
+    def map(self, dataset):
+        """Maps the dataset to supported visualizations."""
+        viztypes = self.__get_datapoint_types(dataset)
+        properties = vizmapper.get_visualization_properties(dataset, viztypes)
+        suitables = vizmapper.check_possibilities(properties)
+        self.__containsDates = vizmapper.has_date(viztypes)
+        return suitables
 
-	def hasDatePoints(self):
-		"""Returns true if the data contains dates."""
-		return self.__containsDates
+    def has_date_points(self):
+        """Returns true if the data contains dates."""
+        return self.__containsDates
 
-	def __checkConsistency(self, dataset):
-		"""Checks if the dataset is consistent."""
-		consistent = profiler.checkConsistency(dataset)
-		return consistent
+    def __is_dataset_consistent(self, dataset):
+        """Checks if the dataset is consistent."""
+        consistent = profiler.is_dataset_consistent(dataset)
+        return consistent
 
-	def __getVisualizationTypes(self, dataset):
-		"""Returns all containing visualization types."""
-		viztypes = profiler.getDatapointTypes(dataset[0])
-		return viztypes
+    def __get_datapoint_types(self, dataset):
+        """Returns all containing visualization types."""
+        viztypes = profiler.get_datapoint_types(dataset[0])
+        return viztypes
 
-	def __validateInput(self, inputdata):
-		"""Validates the input data:"""
-		validdata = []
-		if self.__mergedata:
-			validdata = self.__mergedDatasetValidation(inputdata)
-		else:
-			validdata = self.__datasetValidation(inputdata)
-		return validdata
+    def __validate_input(self, inputdata):
+        """Validates the input data:"""
+        validdata = []
+        if self.__mergedata:
+            validdata = self.__merged_dataset_validation(inputdata)
+        else:
+            validdata = self.__dataset_validation(inputdata)
+        return validdata
 
-	def __mergedDatasetValidation(self, inputdata):
-		"""Validate the data by merging all shared keys."""
-		allkeys = validater.getAllKeysFromDataset(inputdata)
-		sharedkeys = validater.determineEvenKeyset(allkeys, inputdata)
-		dataset = validater.generateValidDatasetFromEvenKeys(sharedkeys, inputdata)
-		return dataset
+    def __merged_dataset_validation(self, inputdata):
+        """Validate the data by merging all shared keys."""
+        allkeys = validater.get_all_keys_in_dataset(inputdata)
+        sharedkeys = validater.determine_shared_keys_in_dataset(allkeys, inputdata)
+        dataset = validater.generate_valid_dataset_from_shared_keys(sharedkeys, inputdata)
+        return dataset
 
-	def __datasetValidation(self, inputdata):
-		"""Validate the unmerged data by counting the keys."""
-		keycount = validater.countKeys(inputdata)
-		validkeys = validater.validateData(keycount)
-		dataset = validater.generateValidDataset(validkeys, inputdata)
-		return dataset
+    def __dataset_validation(self, inputdata):
+        """Validate the unmerged data by counting the keys."""
+        keycount = validater.count_keys_in_raw_data(inputdata)
+        validkeys = validater.validate_data_keys(keycount)
+        dataset = validater.generate_valid_dataset(validkeys, inputdata)
+        return dataset
 

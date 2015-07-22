@@ -23,7 +23,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-def getDatapointTypes(datapoint):
+def get_datapoint_types(datapoint):
     """Determines the datas visualization-types of a given datapoint.
 	Valid visualization-types are 'number', 'string' and 'time'"""
     types = []
@@ -33,7 +33,7 @@ def getDatapointTypes(datapoint):
         if str(key).endswith("date") or str(key).endswith("time"):
             types.append("time")
 
-        elif isfloat(item) or isint(item):
+        elif is_float(item) or is_int(item):
             types.append("number")
 
         # Python 3 string determination.
@@ -51,7 +51,7 @@ def getDatapointTypes(datapoint):
     return types
 
 
-def isfloat(value):
+def is_float(value):
     try:
         number = float(value)
     except ValueError:
@@ -60,7 +60,7 @@ def isfloat(value):
         return True
 
 
-def isint(value):
+def is_int(value):
     try:
         num_a = float(value)
         num_b = int(num_a)
@@ -70,14 +70,14 @@ def isint(value):
         return num_a == num_b
 
 
-def checkConsistency(input_data):
+def is_dataset_consistent(input_data):
     """Checks the consistency of the dataset. Each item
 	must contain the exact datapoint-type as the other."""
     if input_data:
-        current = getDatapointTypes(input_data[0])
+        current = get_datapoint_types(input_data[0])
         for item in input_data[1:]:
             previous = current
-            current = getDatapointTypes(item)
+            current = get_datapoint_types(item)
             if previous != current:
                 return False
     return True

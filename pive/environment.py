@@ -28,7 +28,6 @@ import importlib
 from .visualization import defaults as default
 
 
-
 # Bundles all essential access methods to render visualizations.
 class Environment():
     # Contains all suitable visualizations. Only those
@@ -51,11 +50,11 @@ class Environment():
         self.__outputpath = outputpath
 
     # Set the output path of all visualization files.
-    def setOutputPath(outputpath):
+    def set_output_path(outputpath):
         self.__outputpath = outputpath
 
     # Change the internal input manager instance
-    def setInputManager(self, inputmanager):
+    def set_input_manager(self, inputmanager):
         self.__inputmanager = inputmanager
 
     # Load the dataset utilizing the internal input manager.
@@ -63,19 +62,19 @@ class Environment():
         """Loads data from a source."""
         inputdata = self.__inputmanager.read(source)
         self.__suitables = self.__inputmanager.map(inputdata)
-        self.__modules = self.importSuitableVisualizations(self.__suitables)
+        self.__modules = self.import_suitable_visualizations(self.__suitables)
         self.__data = inputdata
-        self.__hasDates = self.__inputmanager.hasDatePoints()
+        self.__hasDates = self.__inputmanager.has_date_points()
         # Converting the datakeys into strings.
         self.__datakeys = [str(i) for i in list(self.__data[0].keys())]
         return self.__suitables
 
-    # Import all visualization modules.
-    def importSuitableVisualizations(self, suitables):
-        """Dynamically import all suited visualization files."""
+    @staticmethod
+    def import_suitable_visualizations(suitable_visualization_list):
+        """Dynamically import all suited visualization modules."""
 
         mods = []
-        for item in suitables:
+        for item in suitable_visualization_list:
             mod = '.%s' % item
             mods.append(mod)
 
@@ -101,13 +100,13 @@ class Environment():
         class_ = getattr(module, "Chart")
 
         # When dates occur the constructor is called differently.
-        if (self.__hasDates):
-            mychart = class_(self.__data, modname, times=True)
+        if self.__hasDates:
+            chart_decision = class_(self.__data, modname, times=True)
         else:
-            mychart = class_(self.__data, modname)
+            chart_decision = class_(self.__data, modname)
 
-        mychart.setDataKeys(self.__datakeys)
-        return mychart
+        chart_decision.setDataKeys(self.__datakeys)
+        return chart_decision
 
     # Render the chart by creating all visualization files.
     def render(self, chart):

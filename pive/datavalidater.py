@@ -25,78 +25,84 @@
 
 from collections import OrderedDict
 
-def countKeys(raw_dataset):	
-	"""Counts all keysets in the dataset."""
-	keycount = {}
-	for item in raw_dataset:
-		try:	
-			keyset = tuple(item.keys())
-		except AttributeError as e:
-			print ('Key counting failed. "%s" is not a key/value pair. Error: %s' % (item, e.args[0]))
-			return {}
-		else:
-			# For each new keyset occurence,
-			# generate the intial entry.		
-			if (keyset not in keycount.keys()):		
-				keycount[keyset] = 1			
-			# For each known keyset increment the count.
-			else:	
-				keycount[keyset] += 1
-	return keycount
 
-def validateData(keyset_occurences):
-	"""Checks the dataset for valid keysets. The last contained keyset
+def count_keys_in_raw_data(raw_dataset):
+    """Counts all keysets in the dataset."""
+    keycount = {}
+    for item in raw_dataset:
+        try:
+            keyset = tuple(item.keys())
+        except AttributeError as e:
+            print ('Key counting failed. "%s" is not a key/value pair. Error: %s' % (item, e.args[0]))
+            return {}
+        else:
+            # For each new keyset occurence,
+            # generate the intial entry.
+            if (keyset not in keycount.keys()):
+                keycount[keyset] = 1
+            # For each known keyset increment the count.
+            else:
+                keycount[keyset] += 1
+    return keycount
+
+
+def validate_data_keys(keyset_occurences):
+    """Checks the dataset for valid keysets. The last contained keyset
 	with the most occurences will be assumed to be valid."""
-	valid_tuple = ()
-	validkeys = []
-	maxcount = 0
-	
-	for key in list(keyset_occurences.keys()):		
-		currentCount = keyset_occurences[key]
-		if (currentCount >= maxcount):
-			maxcount = currentCount
-			valid_tuple = key
-	#Return a valid keyset as list.
-	for elem in valid_tuple:
-		validkeys.append(elem)
-	return validkeys
-	
-def generateValidDataset(valid_keyset, raw_dataset):
-	"""Generates a valid dataset based on the highest count."""
-	valid_data = []
-	for item in raw_dataset:
-		if valid_keyset == list(item.keys()):
-			valid_data.append(item)
-	return valid_data
+    valid_tuple = ()
+    validkeys = []
+    maxcount = 0
 
-def getAllKeysFromDataset(raw_dataset):
-	"""Determines if there are keys shared by
-	the whole dataset"""	
-	allKeys = []
-	for item in raw_dataset:
-		for elem in list(item.keys()):
-			if elem not in allKeys:
-				allKeys.append(elem)
-	return allKeys
+    for key in list(keyset_occurences.keys()):
+        current_count = keyset_occurences[key]
+        if (current_count >= maxcount):
+            maxcount = current_count
+            valid_tuple = key
+    # Return a valid keyset as list.
+    for elem in valid_tuple:
+        validkeys.append(elem)
+    return validkeys
 
-def determineEvenKeyset(all_keys, raw_dataset):
-	"""Determines if there are keys shared by
-	the whole dataset."""	
-	evenKeys = all_keys
-	for item in raw_dataset:
-		#Intersection of two lists.		
-		evenKeys = list(set(evenKeys) & set(list(item.keys())))		
-	return evenKeys
 
-def generateValidDatasetFromEvenKeys(even_keyset, raw_dataset):
-	"""Generates a valid dataset based on the keys shared by
+def generate_valid_dataset(valid_keyset, raw_dataset):
+    """Generates a valid dataset based on the highest count."""
+    valid_data = []
+    for item in raw_dataset:
+        if valid_keyset == list(item.keys()):
+            valid_data.append(item)
+    return valid_data
+
+
+def get_all_keys_in_dataset(raw_dataset):
+    """Determines if there are keys shared by
+	the whole dataset"""
+    allKeys = []
+    for item in raw_dataset:
+        for elem in list(item.keys()):
+            if elem not in allKeys:
+                allKeys.append(elem)
+    return allKeys
+
+
+def determine_shared_keys_in_dataset(all_keys, raw_dataset):
+    """Determines if there are keys shared by
 	the whole dataset."""
-	valid_data = []
-	for item in raw_dataset:
-		datapoint = OrderedDict({})
-		for key in list(item.keys()):
-			if key in even_keyset:
-				datapoint[key] = item[key]
-		if datapoint:
-			valid_data.append(datapoint)
-	return valid_data
+    evenKeys = all_keys
+    for item in raw_dataset:
+        # Intersection of two lists.
+        evenKeys = list(set(evenKeys) & set(list(item.keys())))
+    return evenKeys
+
+
+def generate_valid_dataset_from_shared_keys(even_keyset, raw_dataset):
+    """Generates a valid dataset based on the keys shared by
+	the whole dataset."""
+    valid_data = []
+    for item in raw_dataset:
+        datapoint = OrderedDict({})
+        for key in list(item.keys()):
+            if key in even_keyset:
+                datapoint[key] = item[key]
+        if datapoint:
+            valid_data.append(datapoint)
+    return valid_data

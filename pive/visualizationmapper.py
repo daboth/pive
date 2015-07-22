@@ -34,9 +34,10 @@ config_path = default.config_path
 realpath = os.path.dirname(os.path.realpath(__file__))
 internal_config_path = '%s%s' % (realpath, config_path)
 
-def openConfigFiles(default_config_path):
+
+def open_config_files(default_config_path):
     """Opens all json-config files in a directory and
-	returns a list of each files content."""
+    returns a list of each files content."""
     configs = []
     for filename in glob(internal_config_path + '*.json'):
         fp = open(filename, 'r')
@@ -45,7 +46,7 @@ def openConfigFiles(default_config_path):
     return configs
 
 
-def hasDate(viz_types):
+def has_date(viz_types):
     """Checks if the datapoint has dates."""
     times = False
     for item in viz_types:
@@ -54,22 +55,22 @@ def hasDate(viz_types):
     return times
 
 
-def getVisualizationProperties(dataset, viz_types):
+def get_visualization_properties(dataset, viz_types):
     """Generates a list of the dataset properties. Returns
-	all properties in the following order: Number of Datapoints,
-	Number of Variables, Datesupport,
-	List of Visualization-Types."""
+    all properties in the following order: Number of Datapoints,
+    Number of Variables, Datesupport,
+    List of Visualization-Types."""
     props = []
     length = len(dataset)
     props.append(length)
     props.append(len(viz_types))
-    times = hasDate(viz_types)
+    times = has_date(viz_types)
     props.append(times)
     props.append(viz_types)
 
     # Indicates, if the abcissa of the dataset is in lexicographic order.
-    if ((viz_types[0] in ('number', 'time')) and length > 1):
-        lexicographic = isInLexicographicOrder(dataset)
+    if (viz_types[0] in ('number', 'time')) and length > 1:
+        lexicographic = is_data_in_lexicographic_order(dataset)
     else:
         lexicographic = False
 
@@ -77,9 +78,9 @@ def getVisualizationProperties(dataset, viz_types):
     return props
 
 
-def matchesDataRequirements(given_types, required_types):
+def types_matching_data_requirements(given_types, required_types):
     """Verifies if all given types match the requirements.
-	Requirements may vary and support multiple options."""
+    Requirements may vary and support multiple options."""
     matches = True
     i = 0
 
@@ -92,9 +93,9 @@ def matchesDataRequirements(given_types, required_types):
     return matches
 
 
-def multiDataConsistent(given_types, singleDataLength):
+def is_multiple_data_consistent(given_types, singleDataLength):
     """Verifies if the multiple data elements following
-	the last single data element are consistent."""
+    the last single data element are consistent."""
     consistent = True
     last_index = singleDataLength - 1
     last_element = given_types[last_index]
@@ -105,7 +106,7 @@ def multiDataConsistent(given_types, singleDataLength):
     return consistent
 
 
-def isAscending(dataset):
+def is_data_value_ascending(dataset):
     """Checks if the data is ascending."""
     ascending = True
     starting_abscissa = list((dataset[0]).items())[0][1]
@@ -118,7 +119,7 @@ def isAscending(dataset):
     return ascending
 
 
-def isDescending(dataset):
+def is_data_value_descending(dataset):
     """Checks if the data ist descending."""
     descending = True
     starting_abscissa = list((dataset[0]).items())[0][1]
@@ -131,21 +132,21 @@ def isDescending(dataset):
     return descending
 
 
-def isInLexicographicOrder(dataset):
+def is_data_in_lexicographic_order(dataset):
     """Checks if the data is ascending or descending."""
     lexicographic = True
-    if not (isDescending(dataset) or isAscending(dataset)):
+    if not (is_data_value_descending(dataset) or is_data_value_ascending(dataset)):
         lexicographic = False
     return lexicographic
 
 
-def checkPossibilities(property_list):
+def check_possibilities(property_list):
     """Checks if the input data maps to any of
-	the visualization configs and returns a resultlist
-	with the supported charts."""
+    the visualization configs and returns a resultlist
+    with the supported charts."""
     result = []
     props = property_list
-    conf = openConfigFiles(config_path)
+    conf = open_config_files(config_path)
 
     for item in conf:
         item_type = item['title']
@@ -154,7 +155,7 @@ def checkPossibilities(property_list):
 
         for elem in item.keys():
             # The dataset should contain at
-            #least the minimum required datapoints.
+            # least the minimum required datapoints.
             if elem == 'min_datapoints':
                 if props[0] < item[elem]:
                     isPossible = False
@@ -216,7 +217,7 @@ def checkInputOrder(elem, item, props, supportsMultiData):
 
     # If the data is larger than the single length it must match the
     # requirements for multiple datasets.
-    data_matches = matchesDataRequirements(given_types, req_vtypes)
+    data_matches = types_matching_data_requirements(given_types, req_vtypes)
 
     if not data_matches:
         isPossible = False
@@ -224,7 +225,7 @@ def checkInputOrder(elem, item, props, supportsMultiData):
     if (datalength > requiredlength):
         if supportsMultiData:
             # All points in multiple datasets must be consistent.
-            multi_consistent = multiDataConsistent(given_types, singleDataLength)
+            multi_consistent = is_multiple_data_consistent(given_types, singleDataLength)
             if not multi_consistent:
                 isPossible = False
         else:

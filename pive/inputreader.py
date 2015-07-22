@@ -28,13 +28,13 @@ import csv
 from collections import OrderedDict
 
 
-def loadInputFile(input_source):
+def load_input_source(input_source):
     """Load data from an arbitrary input source. Currently supported:
 	JSON, JSON-String, CSV, CSV-String. Returns an empty list if no data
 	is available."""
-    inputdata = []
+    input_data = []
     try:
-        inputdata = loadJSON(input_source)
+        input_data = load_json_from_file(input_source)
     except ValueError as e:
         pass
     except IOError as e:
@@ -42,11 +42,11 @@ def loadInputFile(input_source):
     except Exception as e:
         pass
     else:
-        return inputdata
+        return input_data
 
-    if not inputdata:
+    if not input_data:
         try:
-            inputdata = loadJSONString(input_source)
+            input_data = load_json_string(input_source)
         except AttributeError as e:
             pass
         except ValueError as e:
@@ -54,9 +54,9 @@ def loadInputFile(input_source):
         except Exception as e:
             pass
 
-    if not inputdata:
+    if not input_data:
         try:
-            inputdata = loadCSV(input_source)
+            input_data = load_csv_from_file(input_source)
         except csv.Error as e:
             pass
         except IOError as e:
@@ -64,28 +64,28 @@ def loadInputFile(input_source):
         except Exception as e:
             pass
 
-    if not inputdata:
+    if not input_data:
         try:
-            inputdata = loadCSVString(input_source)
+            input_data = load_csv_string(input_source)
         except Exception as e:
             pass
-    return inputdata
+    return input_data
 
 
-def loadJSON(json_input):
+def load_json_from_file(json_input):
     """Load a JSON File."""
     fp = open(json_input, 'r')
     inpt = json.load(fp, object_pairs_hook=OrderedDict)
     return inpt
 
 
-def loadJSONString(json_input):
+def load_json_string(json_input):
     """Load a JSON-String."""
     inpt = json.loads(json_input, object_pairs_hook=OrderedDict)
     return inpt
 
 
-def loadCSVString(csv_input):
+def load_csv_string(csv_input):
     """Load a CSV-String."""
     inputstring = csv_input.split('\n')
     data = []
@@ -98,21 +98,14 @@ def loadCSVString(csv_input):
         od = OrderedDict()
 
         for item in header:
-            value = parseValueType(row[item])
+            value = parse_value_type(row[item])
             od[item] = value
         data.append(od)
 
     return data
 
 
-def UnicodeDictReader(utf8, **kwargs):
-    """Generator for unicode csv dictionary proccessing."""
-    unic_reader = csv.DictReader(utf8, **kwargs)
-    for row in unic_reader:
-        yield OrderedDict([(key, unicode(value, 'utf-8')) for key, value in row.iteritems()])
-
-
-def loadCSV(csv_input):
+def load_csv_from_file(csv_input):
     """Loads the input from a csv file and returns
 	a list of ordered dictionaries for further processing."""
     data = []
@@ -124,7 +117,7 @@ def loadCSV(csv_input):
     csvfile.seek(0)
     # The delimiter used in the dialect.
     delimiterchar = dialect.delimiter
-    #Opens the input file with the determined delimiter.
+    # Opens the input file with the determined delimiter.
     dictreader = csv.DictReader(csvfile, dialect=dialect)
 
     header = dictreader.fieldnames
@@ -132,25 +125,25 @@ def loadCSV(csv_input):
     #Translate the data into a list of dictionaries.
     for row in dictreader:
 
-        od = OrderedDict()
+        ordered_data = OrderedDict()
         for item in header:
-            value = parseValueType(row[item])
+            value = parse_value_type(row[item])
 
-            od[item] = value
+            ordered_data[item] = value
 
-        data.append(od)
+        data.append(ordered_data)
     return data
 
 
-def parseValueType(value):
-    if isint(value):
+def parse_value_type(value):
+    if is_int(value):
         value = int(value)
-    elif isfloat(value):
+    elif is_float(value):
         value = float(value)
     return value
 
 
-def isfloat(value):
+def is_float(value):
     try:
         number = float(value)
     except ValueError:
@@ -159,7 +152,7 @@ def isfloat(value):
         return True
 
 
-def isint(value):
+def is_int(value):
     try:
         num_a = float(value)
         num_b = int(num_a)
