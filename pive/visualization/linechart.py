@@ -49,11 +49,14 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         vv.ViewportVisualization.__init__(self)
 
         # Metadata
-        self.__title = 'linechart'
+        self._title = 'linechart'
+        self.__template_name = 'linechart'
         self.__dataset = dataset
         realpath = os.path.dirname(os.path.realpath(__file__))
-        self.__template_url = '%s%s%s' % (realpath, default.template_path, template_name)
+        self.__template_url = '%s%s' % (realpath, default.template_path)
+        print (self.__template_url)
         self.__datakeys = []
+        self.__version = default.p_version
 
         # Visualization properties.
         self.__width = width
@@ -63,6 +66,7 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         self.__jumplength = jumplength
         self.__xlabel = default.xlabel
         self.__ylabel = default.ylabel
+        self.__label_size = default.label_size
 
         if times:
             self.__scales = default.timescales
@@ -83,13 +87,13 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         self.__line_stroke = default.line_stroke
         self.__font_size = default.font_size
 
-    def setTitle(self, title):
-        self.__title = title
+#    def set_title(self, title):
+#        self.__title = title
 
     def getViewport(self):
         return self.__viewport
 
-    def setLabels(self, labels):
+    def set_labels(self, labels):
         self.__xlabel = labels[0]
         self.__ylabel = labels[1]
 
@@ -112,12 +116,14 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         self.__iconcolor = iconcolor
         self.__iconhighlight = iconhighlight
 
-    def setChartColors(self, colors):
+    def set_chart_colors(self, colors):
         """Basic Method."""
         self.__colors = colors
 
-    def generateVisualizationDataset(self, dataset):
+    def generate_visualization_dataset(self, dataset):
         """Basic Method."""
+
+
         visdataset = []
 
         for datapoint in dataset:
@@ -133,7 +139,7 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
         return visdataset
 
-    def writeDatasetFile(self, dataset, destination_url, filename):
+    def write_dataset_file(self, dataset, destination_url, filename):
         dest_file = '%s%s' % (destination_url, filename)
         outp = open(dest_file, 'w')
         json.dump(dataset, outp, indent=2)
@@ -143,21 +149,24 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
     def setScales(self, scales):
         self.__scales = scales
 
-    def createCSS(self, template):
-        templateVars = {'t_font_size': self.__font_size,
-                        't_shape_rendering': self.__shape_rendering,
-                        't_line_stroke': self.__line_stroke}
+    # def create_css(self, template):
+    #     templateVars = {'t_font_size': self.__font_size,
+    #                     't_shape_rendering': self.__shape_rendering,
+    #                     't_line_stroke': self.__line_stroke}
+    #
+    #     outputText = template.render(templateVars)
+    #     return outputText
+
+    def create_html(self, template):
+        templateVars = {'t_title': self._title,
+                        't_div_hook': self._div_hook}
 
         outputText = template.render(templateVars)
+
         return outputText
 
-    def createHTML(self, template):
-        templateVars = {'t_title': self.__title}
-
-        outputText = template.render(templateVars)
-        return outputText
-
-    def createJS(self, template, dataset_url):
+    # Creates the JavaScript code based on the template.
+    def create_js(self, template, dataset_url):
         templateVars = {'t_width': self.__width,
                         't_height': self.__height,
                         't_padding': self.__padding,
@@ -176,12 +185,18 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
                         't_format': self.__timeformat,
                         't_iso': self.__timeformat,
                         't_scales': self.__scales,
-                        't_colors': self.__colors}
+                        't_colors': self.__colors,
+                        't_div_hook': self._div_hook,
+                        't_font_size': self.__font_size,
+                        't_shape_rendering': self.__shape_rendering,
+                        't_line_stroke': self.__line_stroke,
+                        't_pive_version' : self.__version,
+                        't_axis_label_size' : self.__label_size}
 
         outputText = template.render(templateVars)
         return outputText
 
-    def writeFile(self, output, destination_url, filename):
+    def write_file(self, output, destination_url, filename):
 
         dest_file = '%s%s' % (destination_url, filename)
 
@@ -199,28 +214,28 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         f.close()
 
 
-    def createVisualizationFiles(self, destination_url):
-        #template = loadTemplate(template_url)
-        html_template = self.loadTemplate('%s/html.jinja' % (self.__template_url))
-        css_template = self.loadTemplate('%s/css.jinja' % (self.__template_url))
-        js_template = self.loadTemplate('%s/js.jinja' % (self.__template_url))
+    def create_visualization_files(self, destination_url):
+        #template = load_template_file(template_url)
+        html_template = self.load_template_file('%s/html.jinja' % (self.__template_url))
+        #css_template = self.load_template_file('%s/css.jinja' % (self.__template_url))
+        js_template = self.load_template_file('%s/%s.jinja' % (self.__template_url, self.__template_name))
 
-        dataset_url = '%s.json' % (self.__title)
+        dataset_url = '%s.json' % (self._title)
 
-        js = self.createJS(js_template, dataset_url)
-        html = self.createHTML(html_template)
-        css = self.createCSS(css_template)
+        js = self.create_js(js_template, dataset_url)
+        html = self.create_html(html_template)
+        #css = self.create_css(css_template)
 
-        self.writeFile(html, destination_url, '/%s.html' % (self.__title))
-        self.writeFile(css, destination_url, '/%s.css' % (self.__title))
-        self.writeFile(js, destination_url, '/%s.js' % (self.__title))
+        self.write_file(html, destination_url, '/%s.html' % (self._title))
+        #self.write_file(css, destination_url, '/%s.css' % (self._title))
+        self.write_file(js, destination_url, '/%s.js' % (self._title))
 
-        visdata = self.generateVisualizationDataset(self.__dataset)
-        self.writeDatasetFile(visdata, destination_url, '/%s.json' % (self.__title))
+        visdata = self.generate_visualization_dataset(self.__dataset)
+        self.write_dataset_file(visdata, destination_url, '/%s.json' % (self._title))
 
-    # self.writeFile(js, '%s/%s.js' % (destination_url, self.__title))
-    # self.writeFile(html, '%s/%s.html' % (destination_url, self.__title))
-    # self.writeFile(css, '%s/%s.css' % (destination_url, self.__title))
+    # self.write_file(js, '%s/%s.js' % (destination_url, self.__title))
+    # self.write_file(html, '%s/%s.html' % (destination_url, self.__title))
+    # self.write_file(css, '%s/%s.css' % (destination_url, self.__title))
     # pass
 
     def setJumplength(self, jumplength):
@@ -242,7 +257,7 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
             viewport = default.viewport
         self.__viewport = viewport
 
-    def setHeight(self, height):
+    def set_height(self, height):
         """Basic method for height driven data."""
         if not isinstance(height, int):
             raise ValueError("Integer expected, got %s instead." % (type(height)))
@@ -251,7 +266,7 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
             height = default.height
         self.__height = height
 
-    def setWidth(self, width):
+    def set_width(self, width):
         """Basic method for width driven data."""
         if not isinstance(width, int):
             raise ValueError("Integer expected, got %s instead." % (type(width)))
@@ -260,11 +275,11 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
             width = default.width
         self.__width = width
 
-    def setDimension(self, width, height):
-        self.setWidth(width)
-        self.setHeight(height)
+    def set_dimension(self, width, height):
+        self.set_width(width)
+        self.set_height(height)
 
-    def loadTemplate(self, template_url):
+    def load_template_file(self, template_url):
         templateLoader = jinja2.FileSystemLoader(searchpath=[default.template_path, '/'])
         # templateLoader = jinja2.FileSystemLoader(searchpath=default.template_path)
         print ("Opening template: %s/%s" % (default.template_path, template_url))

@@ -5,7 +5,7 @@ setup(
     packages=['pive', 'pive/visualization'],
     use_2to3=True,
     include_package_data=True,
-    version='0.2.3',
+    version='0.3.3',
     url='python-ive.org',
     license='BSD',
     description='Interactive visualization tool',

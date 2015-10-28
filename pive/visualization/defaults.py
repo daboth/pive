@@ -38,6 +38,10 @@ template_path = '/templates/'
 output_path = '%s/output' % (sys.path[0])
 # Path where pive locates the visualizations config file.
 config_path = '/visualization/config/'
+# Div container in which the visualization will be placed.
+div_hook = 'body'
+# pive version
+p_version = '0.2.3'
 
 ####################
 ## Default Values ##
@@ -63,6 +67,7 @@ barwidth = 20
 shape_rendering = 'optimizeSpeed'
 line_stroke = 'black'
 font_size = 16
+label_size = 18
 
 ####################
 ## Formatting ######

@@ -22,60 +22,64 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+import defaults as default
+import types
 
 class BaseVisualization:
+    implErrorMessage = 'Method required and needs to be implemented.'
 
-	implErrorMessage = 'Method required and needs to be implemented.'
+    def __init__(self):
+        self._div_hook = default.div_hook
 
-	def __init__(self):
-		pass
-		
-	def setTitle(self, title):
-		raise NotImplementedError(implErrorMessage)
+    def set_div_hook(self, div_hook):
+        assert isinstance(div_hook, types.StringType)
+        self._div_hook = div_hook
 
-	def setLabels(self, labels):
-		raise NotImplementedError(implErrorMessage)
+    def get_js_code(self):
+        raise NotImplementedError(implErrorMessage)
 
-	def setDataset(self,dataset):
-		raise NotImplementedError(implErrorMessage)
+    def set_title(self, title):
+        assert isinstance(title, types.StringType)
+        self._title = title
 
-	def setChartColors(self, colors):
-		raise NotImplementedError(implErrorMessage)
+    def set_labels(self, labels):
+        raise NotImplementedError(implErrorMessage)
 
-	def generateVisualizationDataset(self, dataset):
-		raise NotImplementedError(implErrorMessage)
+    def set_dataset(self, dataset):
+        raise NotImplementedError(implErrorMessage)
 
-	def writeDatasetFile(self, dataset, destination_url, filename):
-		raise NotImplementedError(implErrorMessage)	
+    def set_chart_colors(self, colors):
+        raise NotImplementedError(implErrorMessage)
 
-	def createCSS(self, template):
-		raise NotImplementedError(implErrorMessage)
+    def generate_visualization_dataset(self, dataset):
+        raise NotImplementedError(implErrorMessage)
 
-	def createHTML(self, template):
-		raise NotImplementedError(implErrorMessage)
+    def write_dataset_file(self, dataset, destination_url, filename):
+        raise NotImplementedError(implErrorMessage)
 
-	def createJS(self, template, dataset_url):
-		raise NotImplementedError(implErrorMessage)
+    def create_css(self, template):
+        raise NotImplementedError(implErrorMessage)
 
-	def writeFile(self, output, destination_url, filename):
-		raise NotImplementedError(implErrorMessage)
+    def create_html(self, template):
+        raise NotImplementedError(implErrorMessage)
 
-	def createVisualizationFiles(self, destination_url):
-		raise NotImplementedError(implErrorMessage)		
+    def create_js(self, template, dataset_url):
+        raise NotImplementedError(implErrorMessage)
 
-	def setHeight(self, height):
-		raise NotImplementedError(implErrorMessage)
+    def write_file(self, output, destination_url, filename):
+        raise NotImplementedError(implErrorMessage)
 
-	def setWidth(self, width):
-		raise NotImplementedError(implErrorMessage)
+    def create_visualization_files(self, destination_url):
+        raise NotImplementedError(implErrorMessage)
 
-	def setDimension(self, width, height):
-		raise NotImplementedError(implErrorMessage) 	
+    def set_height(self, height):
+        raise NotImplementedError(implErrorMessage)
 
-	def loadTemplate(self, template_url):
-		raise NotImplementedError(implErrorMessage)
+    def set_width(self, width):
+        raise NotImplementedError(implErrorMessage)
 
+    def set_dimension(self, width, height):
+        raise NotImplementedError(implErrorMessage)
 
-	
-
- 
+    def load_template_file(self, template_url):
+        raise NotImplementedError(implErrorMessage)

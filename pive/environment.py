@@ -1,4 +1,4 @@
-# Copyright (c) 2014, David Bothe
+# Copyright (c) 2014 - 2015, David Bothe
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -23,38 +23,43 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import sys
+# -*- coding: utf-8 -*-
+""" The pive environment manages the visualizations and
+ relies on a given input manager to read data before
+ processing the visualizations. """
 import importlib
 from .visualization import defaults as default
 
 
 # Bundles all essential access methods to render visualizations.
-class Environment():
-    # Contains all suitable visualizations. Only those
-    # visualizations are imported and it is not
-    # allowed to render unsuited visualizations.
+class Environment(object):
+    """Contains all suitable visualizations. Only those
+    visualizations are imported and it is not
+    allowed to render unsuited visualizations."""
     __suitables = []
     __data = []
 
-    # The acual visualization modules.
+    # The actual visualization modules.
     __modules = []
 
-    __hasDates = False
+    __has_datefields = False
 
     __datakeys = []
 
-    # The Environment needs an input manager instance to work, but is optional
-    # at creation. Leaving the user to configure the input manager first.
+
     def __init__(self, inputmanager=None, outputpath=default.output_path):
+        """ The Environment needs an input manager instance to work, but is
+        optional at creation. Leaving the user to configure the
+        input manager first. """
         self.__inputmanager = inputmanager
         self.__outputpath = outputpath
 
-    # Set the output path of all visualization files.
-    def set_output_path(outputpath):
+    def set_output_path(self, outputpath):
+        """Set the output path of all visualization files."""
         self.__outputpath = outputpath
 
-    # Change the internal input manager instance
     def set_input_manager(self, inputmanager):
+        """Change the internal input manager instance."""
         self.__inputmanager = inputmanager
 
     # Load the dataset utilizing the internal input manager.
@@ -64,7 +69,7 @@ class Environment():
         self.__suitables = self.__inputmanager.map(inputdata)
         self.__modules = self.import_suitable_visualizations(self.__suitables)
         self.__data = inputdata
-        self.__hasDates = self.__inputmanager.has_date_points()
+        self.__has_datefields = self.__inputmanager.has_date_points()
         # Converting the datakeys into strings.
         self.__datakeys = [str(i) for i in list(self.__data[0].keys())]
         return self.__suitables
@@ -81,7 +86,8 @@ class Environment():
         modules = []
 
         for item in mods:
-            modules.append(importlib.import_module(item, package=default.module_path))
+            modules.append(importlib.import_module(item,
+                                                   package=default.module_path))
 
         return modules
 
@@ -100,7 +106,7 @@ class Environment():
         class_ = getattr(module, "Chart")
 
         # When dates occur the constructor is called differently.
-        if self.__hasDates:
+        if self.__has_datefields:
             chart_decision = class_(self.__data, modname, times=True)
         else:
             chart_decision = class_(self.__data, modname)
@@ -111,4 +117,4 @@ class Environment():
     # Render the chart by creating all visualization files.
     def render(self, chart):
         """Render the chart."""
-        chart.createVisualizationFiles(self.__outputpath)
+        chart.create_visualization_files(self.__outputpath)
