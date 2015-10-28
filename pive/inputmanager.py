@@ -1,4 +1,4 @@
-# Copyright (c) 2014, David Bothe
+# Copyright (c) 2014 - 2015, David Bothe
 # All rights reserved.
 
 # Redistribution and use in source and binary forms, with or without
@@ -23,26 +23,32 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# -*- coding: utf-8 -*-
+""" The input manager reads files and strings containing
+datasets in json and csv format. The data is automatically
+validated and corrected if necessary."""
 from . import inputreader as reader
 from . import datavalidater as validater
 from . import consistenceprofiler as profiler
 from . import visualizationmapper as vizmapper
 
-notConsistentErrorMsg = "Data is not consistent."
+NOT_CONSISTENT_ERR_MSG = "Data is not consistent."
 
 
-class InputManager:
+class InputManager(object):
+    """Contains and manages the data."""
+
     # Input Managers can try to merge false datapoints or not.
     def __init__(self, mergedata=False):
         self.__mergedata = mergedata
-        self.__containsDates = False
+        self.__contains_datefields = False
 
     def read(self, source):
         """Reads the input source."""
         inputdata = reader.load_input_source(source)
         dataset = self.__validate_input(inputdata)
         if not self.__is_dataset_consistent(dataset):
-            raise ValueError(notConsistentErrorMsg)
+            raise ValueError(NOT_CONSISTENT_ERR_MSG)
         return dataset
 
     def map(self, dataset):
@@ -50,12 +56,12 @@ class InputManager:
         viztypes = self.__get_datapoint_types(dataset)
         properties = vizmapper.get_visualization_properties(dataset, viztypes)
         suitables = vizmapper.check_possibilities(properties)
-        self.__containsDates = vizmapper.has_date(viztypes)
+        self.__contains_datefields = vizmapper.has_date(viztypes)
         return suitables
 
     def has_date_points(self):
         """Returns true if the data contains dates."""
-        return self.__containsDates
+        return self.__contains_datefields
 
     def __is_dataset_consistent(self, dataset):
         """Checks if the dataset is consistent."""
@@ -79,8 +85,10 @@ class InputManager:
     def __merged_dataset_validation(self, inputdata):
         """Validate the data by merging all shared keys."""
         allkeys = validater.get_all_keys_in_dataset(inputdata)
-        sharedkeys = validater.determine_shared_keys_in_dataset(allkeys, inputdata)
-        dataset = validater.generate_valid_dataset_from_shared_keys(sharedkeys, inputdata)
+        sharedkeys = validater.determine_shared_keys_in_dataset(allkeys,
+                                                                inputdata)
+        dataset = validater.generate_valid_dataset_from_shared_keys(sharedkeys,
+                                                                    inputdata)
         return dataset
 
     def __dataset_validation(self, inputdata):

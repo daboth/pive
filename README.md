@@ -48,8 +48,8 @@ Common usage is shown in an example:
 	# the visualization object.
 	mychart = vizenv.choose(suitable_charts[0])
 
-	mychart.setWidth(900)
-	mychart.setHeight(500)
+	mychart.set_width(900)
+	mychart.set_height(500)
 
 	# 4) Let the environment render the chart.
 	vizenv.render(mychart)

@@ -75,13 +75,13 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         self.__barwidth = default.barwidth
         self.__verticalscale = 'linear'
 
-    def setTitle(self, title):
+    def set_title(self, title):
         self.__title = title
 
     def getViewport(self):
         return self.__viewport
 
-    def setLabels(self, labels):
+    def set_labels(self, labels):
         self.__xlabel = labels[0]
         self.__ylabel = labels[1]
 
@@ -101,11 +101,11 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         self.__iconcolor = iconcolor
         self.__iconhighlight = iconhighlight
 
-    def setChartColors(self, colors):
+    def set_chart_colors(self, colors):
         """Basic Method."""
         self.__colors = colors
 
-    def generateVisualizationDataset(self, dataset):
+    def generate_visualization_dataset(self, dataset):
         """Basic Method."""
         visdataset = []
 
@@ -117,7 +117,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
             visdataset.append(visdatapoint)
         return visdataset
 
-    def writeDatasetFile(self, dataset, destination_url, filename):
+    def write_dataset_file(self, dataset, destination_url, filename):
         dest_file = '%s%s' % (destination_url, filename)
         outp = open(dest_file, 'w')
         json.dump(dataset, outp, indent=2)
@@ -127,7 +127,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
     def setVerticalScale(self, scale):
         self.__verticalscale = scale
 
-    def createCSS(self, template):
+    def create_css(self, template):
         templateVars = {'t_font_size': self.__font_size,
                         't_shape_rendering': self.__shape_rendering,
                         't_line_stroke': self.__line_stroke}
@@ -135,13 +135,13 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         outputText = template.render(templateVars)
         return outputText
 
-    def createHTML(self, template):
+    def create_html(self, template):
         templateVars = {'t_title': self.__title}
 
         outputText = template.render(templateVars)
         return outputText
 
-    def createJS(self, template, dataset_url):
+    def create_js(self, template, dataset_url):
         templateVars = {'t_width': self.__width,
                         't_height': self.__height,
                         't_padding': self.__padding,
@@ -162,7 +162,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         outputText = template.render(templateVars)
         return outputText
 
-    def writeFile(self, output, destination_url, filename):
+    def write_file(self, output, destination_url, filename):
 
         dest_file = '%s%s' % (destination_url, filename)
 
@@ -181,22 +181,22 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         f.close()
 
 
-    def createVisualizationFiles(self, destination_url):
-        html_template = self.loadTemplate('%s/html.jinja' % (self.__template_url))
-        css_template = self.loadTemplate('%s/css.jinja' % (self.__template_url))
-        js_template = self.loadTemplate('%s/js.jinja' % (self.__template_url))
+    def create_visualization_files(self, destination_url):
+        html_template = self.load_template_file('%s/html.jinja' % (self.__template_url))
+        css_template = self.load_template_file('%s/css.jinja' % (self.__template_url))
+        js_template = self.load_template_file('%s/js.jinja' % (self.__template_url))
 
         dataset_url = '%s.json' % (self.__title)
-        js = self.createJS(js_template, dataset_url)
-        html = self.createHTML(html_template)
-        css = self.createCSS(css_template)
+        js = self.create_js(js_template, dataset_url)
+        html = self.create_html(html_template)
+        css = self.create_css(css_template)
 
-        self.writeFile(html, destination_url, '/%s.html' % (self.__title))
-        self.writeFile(css, destination_url, '/%s.css' % (self.__title))
-        self.writeFile(js, destination_url, '/%s.js' % (self.__title))
+        self.write_file(html, destination_url, '/%s.html' % (self.__title))
+        self.write_file(css, destination_url, '/%s.css' % (self.__title))
+        self.write_file(js, destination_url, '/%s.js' % (self.__title))
 
-        visdata = self.generateVisualizationDataset(self.__dataset)
-        self.writeDatasetFile(visdata, destination_url, '/%s.json' % (self.__title))
+        visdata = self.generate_visualization_dataset(self.__dataset)
+        self.write_dataset_file(visdata, destination_url, '/%s.json' % (self.__title))
 
     def setJumplength(self, jumplength):
         """Basic Method for viewport driven data."""
@@ -217,7 +217,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
             viewport = default.viewport
         self.__viewport = viewport
 
-    def setHeight(self, height):
+    def set_height(self, height):
         """Basic method for height driven data."""
         if not isinstance(height, int):
             raise ValueError("Integer expected, got %s instead." % (type(height)))
@@ -226,7 +226,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
             height = default.height
         self.__height = height
 
-    def setWidth(self, width):
+    def set_width(self, width):
         """Basic method for width driven data."""
         if not isinstance(width, int):
             raise ValueError("Integer expected, got %s instead." % (type(width)))
@@ -235,11 +235,11 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
             width = default.width
         self.__width = width
 
-    def setDimension(self, width, height):
-        self.setWidth(width)
-        self.setHeight(height)
+    def set_dimension(self, width, height):
+        self.set_width(width)
+        self.set_height(height)
 
-    def loadTemplate(self, template_url):
+    def load_template_file(self, template_url):
         templateLoader = jinja2.FileSystemLoader(searchpath=[default.template_path, '/'])
         print ("Opening template: %s/%s" % (default.template_path, template_url))
 

@@ -66,7 +66,7 @@ var root_div = document.getElementById(div_hook);
 {# JavaScript String is immutable, so single strings are defined for readability. #}
 var css_line = '#{{ t_div_hook }} .line { stroke: {{ t_line_stroke }}; fill: none; stroke-width: 2.5px}\n',
     css_tooltip = '#{{ t_div_hook }} .tooltip {color: white; line-height: 1; padding: 12px; font-weight: italic; font-family: arial; border-radius: 5px;}\n';
-    css_axis_path = '#{{ t_div_hook }} .axis path { stroke: {{ t_line_stroke }}; shape-rendering: crispEdges;}\n',
+    css_axis_path = '#{{ t_div_hook }} .axis path { fill: none; stroke: {{ t_line_stroke }}; shape-rendering: crispEdges;}\n',
     css_axis_line = '#{{ t_div_hook }} .axis line { stroke: {{ t_line_stroke }}; shape-rendering: {{ t_shape_rendering }};}\n',
     css_path_area = '#{{ t_div_hook }} .path area { fill: blue; }\n';
     css_axis_text = '#{{ t_div_hook }} .axis text {font-family: sans-serif; font-size: {{ t_font_size }}px }\n',
