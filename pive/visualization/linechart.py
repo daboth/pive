@@ -54,7 +54,6 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         self.__dataset = dataset
         realpath = os.path.dirname(os.path.realpath(__file__))
         self.__template_url = '%s%s' % (realpath, default.template_path)
-        print (self.__template_url)
         self.__datakeys = []
         self.__version = default.p_version
 
@@ -149,14 +148,6 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
     def setScales(self, scales):
         self.__scales = scales
 
-    # def create_css(self, template):
-    #     templateVars = {'t_font_size': self.__font_size,
-    #                     't_shape_rendering': self.__shape_rendering,
-    #                     't_line_stroke': self.__line_stroke}
-    #
-    #     outputText = template.render(templateVars)
-    #     return outputText
-
     def create_html(self, template):
         templateVars = {'t_title': self._title,
                         't_div_hook': self._div_hook}
@@ -216,9 +207,9 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
     def create_visualization_files(self, destination_url):
         #template = load_template_file(template_url)
-        html_template = self.load_template_file('%s/html.jinja' % (self.__template_url))
+        html_template = self.load_template_file('%shtml.jinja' % (self.__template_url))
         #css_template = self.load_template_file('%s/css.jinja' % (self.__template_url))
-        js_template = self.load_template_file('%s/%s.jinja' % (self.__template_url, self.__template_name))
+        js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
 
         dataset_url = '%s.json' % (self._title)
 
@@ -232,11 +223,6 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
         visdata = self.generate_visualization_dataset(self.__dataset)
         self.write_dataset_file(visdata, destination_url, '/%s.json' % (self._title))
-
-    # self.write_file(js, '%s/%s.js' % (destination_url, self.__title))
-    # self.write_file(html, '%s/%s.html' % (destination_url, self.__title))
-    # self.write_file(css, '%s/%s.css' % (destination_url, self.__title))
-    # pass
 
     def setJumplength(self, jumplength):
         """Basic Method for viewport driven data."""
@@ -281,14 +267,9 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
     def load_template_file(self, template_url):
         templateLoader = jinja2.FileSystemLoader(searchpath=[default.template_path, '/'])
-        # templateLoader = jinja2.FileSystemLoader(searchpath=default.template_path)
-        print ("Opening template: %s/%s" % (default.template_path, template_url))
+        print ("Opening template: %s" % (template_url))
 
         templateEnv = jinja2.Environment(loader=templateLoader)
         TEMPLATE_FILE = template_url
         template = templateEnv.get_template(TEMPLATE_FILE)
         return template
-
-	
-
- 

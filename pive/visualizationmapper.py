@@ -150,42 +150,42 @@ def check_possibilities(property_list):
 
     for item in conf:
         item_type = item['title']
-        isPossible = True
-        supportsMultiData = False
+        is_possible = True
+        supports_multi_data = False
 
         for elem in item.keys():
             # The dataset should contain at
             # least the minimum required datapoints.
             if elem == 'min_datapoints':
                 if props[0] < item[elem]:
-                    isPossible = False
+                    is_possible = False
             #The dataset should not contain more
             #than the maximum number off supported
             #datapoints.
             if elem == 'max_datapoints':
                 if item[elem] != 'inf':
                     if (props[0] > item[elem]):
-                        isPossible = False
+                        is_possible = False
 
             #If the data contains a date, the visualization
             #has to support date-types.
             if elem == 'datesupport':
                 if props[2]:
                     if item[elem] != props[2]:
-                        isPossible = False
+                        is_possible = False
             if elem == 'multiple_data':
-                supportsMultiData = item[elem]
+                supports_multi_data = item[elem]
 
             if elem == 'lexical_required':
                 if item[elem] == True:
                     if not props[4]:
-                        isPossible = False
+                        is_possible = False
 
             #Checks if the input order of the desired viz-types matches
             #the requirements.
-            if ((elem == 'vistypes') and isPossible):
-                isPossible = checkInputOrder(elem, item, props, supportsMultiData)
-        if isPossible:
+            if ((elem == 'vistypes') and is_possible):
+                is_possible = checkInputOrder(elem, item, props, supports_multi_data)
+        if is_possible:
             result.append(item_type)
     return result
 

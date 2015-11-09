@@ -251,9 +251,10 @@ d3.json(url, function(data){
 		};
     };
 
-    //Drawing the initial SVG containing the chart by selecting the specific div element of the DOM
-	//and appending a svg tag with the following attributes. The selection is saved as a variable
-	//for later reference.
+
+    {# Drawing the initial SVG containing the chart by selecting the specific div element of the DOM #}
+	{# and appending a svg tag with the following attributes. The selection is saved as a variable   #}
+	{# for later reference.                                                                          #}
 	var svg = d3.select(hashtag.concat(div_hook)).append("svg")
 				.attr("width", width)							
 				.attr("height", height);

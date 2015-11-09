@@ -30,6 +30,15 @@
 import importlib
 from .visualization import defaults as default
 
+# Accessor to choose the charts. Corresponding with
+# the config files 'title' attribute in
+# pive/visualization/config
+CHART_LINE = 'linechart'
+CHART_SCATTER = 'scatterchart'
+CHART_BUBBLE = 'bubblechart'
+CHART_BAR = 'barchart'
+CHART_PIE = 'piechart'
+CHART_CHORD = 'chordchart'
 
 # Bundles all essential access methods to render visualizations.
 class Environment(object):

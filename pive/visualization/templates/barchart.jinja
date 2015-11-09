@@ -40,16 +40,21 @@ var iconwidth = {{ t_iconwidth }};
 var iconheight = {{ t_iconheight }};
 var iconcolor = '{{ t_iconcolor }}';
 var iconhighlight = '{{ t_iconhighlight }}';
-var interpolation = '{{ t_interpolation }}';
-var url = '{{ t_url }}';
-var iso = d3.time.format.utc('{{ t_iso }}');
-var scales = {{ t_scales }};
-var colors = {{ t_colors }};
+var verticalscale = '{{ t_verticalscale }}';
+var barbreak = 0.2;
 var div_hook = '{{ t_div_hook }}';
 
+var url = '{{ t_url }}';
+var threshold = 50;
+var filter;
+
+if ((width / viewport) < threshold){
+	filter = parseInt(threshold * (viewport / width));
+};
+
 {# Tick label rotation and highlights radius are fixed. #}
+var colors = {{ t_colors }};
 var tickrotation = -45;
-var highlightradius = 8;
 
 var hashtag = '#';
 var hash_div_hook = hashtag.concat(div_hook);
@@ -66,7 +71,7 @@ var root_div = document.getElementById(div_hook);
 {# JavaScript String is immutable, so single strings are defined for readability. #}
 var css_line = '#{{ t_div_hook }} .line { stroke: {{ t_line_stroke }}; fill: none; stroke-width: 2.5px}\n',
     css_tooltip = '#{{ t_div_hook }} .tooltip {color: white; line-height: 1; padding: 12px; font-weight: italic; font-family: arial; border-radius: 5px;}\n';
-    css_axis_path = '#{{ t_div_hook }} .axis path { stroke: {{ t_line_stroke }}; shape-rendering: crispEdges;}\n',
+    css_axis_path = '#{{ t_div_hook }} .axis path { fill: none; stroke: {{ t_line_stroke }}; shape-rendering: crispEdges;}\n',
     css_axis_line = '#{{ t_div_hook }} .axis line { stroke: {{ t_line_stroke }}; shape-rendering: {{ t_shape_rendering }};}\n',
     css_path_area = '#{{ t_div_hook }} .path area { fill: blue; }\n';
     css_axis_text = '#{{ t_div_hook }} .axis text {font-family: sans-serif; font-size: {{ t_font_size }}px }\n',
@@ -90,137 +95,61 @@ root_div.appendChild(style);
 {# ############################# #}
 
 d3.json(url, function(data){
-
-	{# The complete dataset. #}
+	//The complete dataset.
 	var dataset = data;
-	{# The current offset starting at zero. #}
+	//The current offset starting at zero.
 	var current_offset = 0;
-	{# Define the viewport of the data. Only a slice of the full dataset is currently shown. #}
+	//Define the viewport of the data. Only a slice of the full dataset is currently shown.
     var viewdata = dataset.slice(current_offset, current_offset + viewport);
+  
+    var vertical_extent = d3.extent(dataset, function(d){ return d.value});
     
-    {# Determines the maximum y-value considering each datapoints maximum. #}
-    var max_y = d3.max(data, function(d){
-    	var datapoint_max = d.y[0];
-    	for (var i = 0; i < d.y.length; i++)
-    		if (d.y[i] > datapoint_max){
-    			datapoint_max = d.y[i];
-    		}
-		return datapoint_max;
-    });
-
-    {# Determines the minimum y-value considering each datapoints minimum. #}
-    var min_y = d3.min(data, function(d){
-    	var datapoint_min = d.y[0];
-    	for (var i = 0; i < d.y.length; i++)
-    		if (d.y[i] < datapoint_min){
-    			datapoint_min = d.y[i];
-    		}
-		return datapoint_min;
-    });
-
-    {# The extent of all datapoint values consists of their minima and maxima. #}
-    var x_extent = d3.extent(viewdata, function(d){ return d.x});
-    var y_extent = [min_y, max_y];
-
-    {# Preparing the axis. #}
-    var xScale;
     var yScale;
     var yAxisScale;
-    scaleXAxis();
+
+	var barScale = d3.scale.ordinal()
+        .domain(d3.range(viewdata.length))
+        .rangeRoundBands([padding + iconwidth + labelsize, width - padding - iconwidth], barbreak);
+
+    barScale.domain(viewdata.map(function(d){
+    	return d.label;
+    }));
+
     scaleYAxis();
-   
-    {# Creates a new date object of a given timestamp. #}
-    function getDateFromTime(time){
-    	try {
-    		return new Date(time);	
-    	} catch (err) {
-    		console.log("An Error occured while parsing the date object.");
-    		console.log(err.message);
-    		return null;
-    	};
-    };
-
-    function scaleXAxis(){			    	
-    	//###################################
-    	//######## scale the x-axis. ########
-    	//###################################
-    	var xrange = [padding + labelsize + iconwidth, width - padding];
-
-    	if (scales[0] == 'linear') {
-    		//Provide a linear scaling.
-    		xScale = d3.scale.linear()
-        			   .range(xrange)          			   
-        			   .domain(x_extent);
-
-    	} else if (scales[0] == 'log') {
-    		if (x_extent[0] <= 0){
-    			xScale = d3.scale.linear()
-        			   .range(xrange)          			   
-        			   .domain(x_extent);    			
-    		} else {
-    			xScale = d3.scale.log()
-        			   .range(xrange)          			   
-        			   .domain(x_extent);
-    		}
-
-    		
-    	} else if (scales[0].substring(0,3) == 'pow') {	
-    		
-    		//The exponent of the power scale is indicated by a number
-    		//following the 'pow', e.g. 'pow2'.
-    		exp = parseInt(scales[0].substring(3, scales[0].length));
-    		
-    		//Provide a power scaling.
-    		xScale = d3.scale.pow()
-    				   .exponent(exp)
-        			   .range(xrange)		   
-        			   .domain(x_extent);
-
-	    } else if (scales[0] == 'date') {
-	    	//Date-code to be implemented.
-	    	var minDate = getDateFromTime(x_extent[0]);
-	    	var maxDate = getDateFromTime(x_extent[1]);
-	    	console.log(minDate.toString());
-	    	console.log(maxDate.toString());
-	    	
-	    	xScale = d3.time.scale()
-	    			   .range(xrange)
-	    			   .domain([minDate, maxDate]);    			    	
-		};
-    };
 
     function scaleYAxis(){			    	
     	//###################################
     	//######## scale the x-axis. ########
     	//###################################
-    	if (scales[1] == 'linear') {
+    	if (verticalscale == 'linear') {
     		//Provide a linear scaling.
     		yScale = d3.scale.linear()
-    			   .range([padding + labelsize, height - padding])
-    			   .domain(y_extent);
+    			   .range([padding + labelsize, height - ((2 * padding) + labelsize)])
+    			   .domain(vertical_extent);
 		    yAxisScale = d3.scale.linear()
     			   .range([height - padding, padding + labelsize])
-    			   .domain(y_extent);
+    			   .domain(vertical_extent);
 
-    	} else if (scales[1] == 'log') {
-    		if (y_extent[0] <= 0){
+    	} else if (verticalscale == 'log') {
+    		if (vertical_extent[0] <= 0){
     			yScale = d3.scale.linear()
-    			   .range([padding + labelsize, height - padding])
-    			   .domain(y_extent);
+    			   .range([padding + labelsize, height - ((2 * padding) + labelsize)])
+    			   .domain(vertical_extent);
 		    	yAxisScale = d3.scale.linear()
     			   .range([height - padding, padding + labelsize])
-    			   .domain(y_extent);
+    			   .domain(vertical_extent);
+    		
     		} else {
     			yScale = d3.scale.log()
         			   .range([padding + labelsize, height - padding])         			   
-        			   .domain(y_extent);
+        			   .domain(vertical_extent);
 		    	yAxisScale = d3.scale.log()
         			   .range([height - padding, padding + labelsize])         			   
-        			   .domain(y_extent);
+        			   .domain(vertical_extent);
     		}
 
     		
-    	} else if (scales[1].substring(0,3) == 'pow') {	
+    	} else if (verticalscale.substring(0,3) == 'pow') {	
     		
     		//The exponent of the power scale is indicated by a number
     		//following the 'pow', e.g. 'pow2'.
@@ -230,30 +159,17 @@ d3.json(url, function(data){
     		yScale = d3.scale.pow()
     				   .exponent(exp)
         			   .range([padding + labelsize, height - padding])		   
-        			   .domain(y_extent);
+        			   .domain(vertical_extent);
 		    yAxisScale = d3.scale.pow()
     				   .exponent(exp)
         			   .range([height - padding, padding + labelsize])		   
-        			   .domain(y_extent);
-
-	    } else if (scales[1] == 'date') {
-	    	//Date-code to be implemented.
-	    	var minDate = getDateFromTime(y_extent[0]);
-	    	var maxDate = getDateFromTime(y_extent[1]);
-	    	console.log(minDate.toString());
-	    	console.log(maxDate.toString());
-	    	yScale = d3.time.scale()
-	    			   .range([padding + labelsize, height - padding])
-	    			   .domain([minDate, maxDate]);    	
-		    yAxisScale = d3.time.scale()
-	    			   .range([height - padding, padding + labelsize])
-	    			   .domain([minDate, maxDate]); 		    	
-		};
+        			   .domain(vertical_extent);
+	    };
     };
 
-    //Drawing the initial SVG containing the chart by selecting the specific div element of the DOM
-	//and appending a svg tag with the following attributes. The selection is saved as a variable
-	//for later reference.
+    {# Drawing the initial SVG containing the chart by selecting the specific div element of the DOM #}
+	{# and appending a svg tag with the following attributes. The selection is saved as a variable   #}
+	{# for later reference.                                                                          #}
 	var svg = d3.select(hashtag.concat(div_hook)).append("svg")
 				.attr("width", width)							
 				.attr("height", height);
@@ -266,18 +182,12 @@ d3.json(url, function(data){
 	var xaxis = d3.svg.axis();
 	var yaxis = d3.svg.axis();
 
+	//X Axis initialization.
 	function initializeXAxis() {
+		xaxis.orient('bottom')
+			 .tickValues(barScale.domain().filter(function(d, i) { return !(i % filter); }))
+		     .scale(barScale);
 
-		if (scales[0] == 'date') {
-			xaxis.ticks(d3.time.milliseconds, 10)
-    		     .tickFormat(d3.time.format(timeformat))			    			
-			     .tickSize(-(height - padding * 2 - labelsize), 0, 0)
-    		     .scale(xScale);
-		} else {
-
-			xaxis.tickSize(-(height - padding * 2 - labelsize), 0, 0)	    					
-			     .scale(xScale);
-		};					
 	};
 
 	function initializeYAxis() {
@@ -286,7 +196,56 @@ d3.json(url, function(data){
 	};
 
     initializeXAxis();		
-    initializeYAxis();		    			
+    initializeYAxis();	
+
+    function barUpdate() {
+    	var bars = svg.selectAll("rect").data(viewdata);
+
+        bars.enter()
+	        .append("rect")
+	        .attr("opacity", 0.0);	    
+
+        bars.exit().remove();
+
+        bars.attr("class", "bar")
+        	.transition()
+        	.duration(750)
+        	.ease("elastic")
+        	.attr("opacity", 1.0)
+	        .attr("x", function (d) {
+	        	return barScale(d.label);
+		    })
+		        .attr("y", function (d) {
+		        return (height - padding - labelsize) - yScale(d.value);
+		    })
+		        .attr("height", function (d) {
+		        return yScale(d.value);
+		    })
+		        .attr("width", function (d) {
+		        return barScale.rangeBand();
+		    })
+		        .attr("fill", function (d, i) {
+		        return getColorIndex(i);
+		    });
+
+        bars.on("mouseover", function(d, i){
+	        	var tx = d3.mouse(this)[0];
+	        	var ty = d3.mouse(this)[1];
+	        	d3.select(this).transition()
+	        		           .attr("opacity", 0.5);
+	            console.log(viewdata[i].label);
+	        	showTooltip([d.value, viewdata[i].label], [tx, ty], i);
+	        })
+        	.on("mouseout", function(){
+		    	hideTooltip();
+		    	d3.select(this).transition()
+        		           .attr("opacity", 1.0);
+		    });	 
+
+        
+    }
+
+    barUpdate();
 
 	var xa = svg.append('g')
 			   .attr('class', 'x axis')
@@ -308,20 +267,25 @@ d3.json(url, function(data){
 			   .call(yaxis);
 
     var bottom_label = svg.append("text")
-    					  .attr("class", "xlabel")
+    					  .attr("class", "x label")
     					  .attr("x", (width / 2) + (padding / 2))
     					  .attr("y", height)
     					  .style("text-anchor", "middle")
+    					  .style("font-size", labelsize)
     					  .text(xlabel);
 
     var left_label = svg.append("text")
-   						  .attr("class", "ylabel")
+   						  .attr("class", "y label")
     					  .attr("transform", "rotate(-90)")
 				  		  .attr("x", (- height / 2) + (padding / 2))
     					  .attr("y", 0)
     					  .attr("dy", "1em")
     					  .style("text-anchor", "middle")
+    					  .style("font-size", labelsize)
     					  .text(ylabel);
+
+
+
 
 	function drawButtons(){
 		//Append the buttons.
@@ -372,19 +336,6 @@ d3.json(url, function(data){
 		drawButtons();
 	}
 	
-	
-	function updateXAxis(new_extent) {
-
-		if (scales[0] == 'date') {
-			var minDate = iso(getDateFromTime(new_extent[0]));
-	    	var maxDate = iso(getDateFromTime(new_extent[1]));
-			xScale.domain([minDate, maxDate]);
-		} else {
-			xScale.domain(new_extent);
-		}
-		
-	}
-
 	function forwardData() {
 		current_offset += jumplength;
 		
@@ -395,22 +346,13 @@ d3.json(url, function(data){
 			viewdata = dataset.slice(current_offset, current_offset + viewport);
 		};
 		
-		//Binds the new viedata to the line generation.
-		lines.datum(viewdata);
+	    barScale.domain(viewdata.map(function(d){
+	    	return d.label;
+	    }));	  
 
-		x_extent = d3.extent(viewdata, function(d){ return d.x});
+	    updateAxes();	
+	    barUpdate();
 
-		
-		if (scales[0] == 'date') {
-			var minDate = getDateFromTime(x_extent[0]);
-	    	var maxDate = getDateFromTime(x_extent[1]);
-			xScale.domain([minDate, maxDate]);	
-		} else {
-			xScale.domain(x_extent);
-		};
-		
-		updateView();
-		  			
 	};
 
 	
@@ -424,31 +366,28 @@ d3.json(url, function(data){
 			viewdata = dataset.slice(current_offset, current_offset + viewport);
 		};
 		
-		//Binds the new viedata to the line generation.
-		lines.datum(viewdata);
+	    barScale.domain(viewdata.map(function(d){
+	    	return d.label;
+	    }));	  
 
-		x_extent = d3.extent(viewdata, function(d){ return d.x});
-
-		
-		if (scales[0] == 'date') {
-			var minDate = getDateFromTime(x_extent[0]);
-	    	var maxDate = getDateFromTime(x_extent[1]);
-			xScale.domain([minDate, maxDate]);	
-		} else {
-			xScale.domain(x_extent);
-		};
-		
-		updateView();
-		  			
+	    updateAxes();
+	    barUpdate();		
 	};
 	
 	
-	function updateView(){
+	function updateAxes(){
+
+		xaxis.tickValues(barScale.domain().filter(function(d, i) { return !(i % filter); }));
 
 		svg.select(".x.axis")
-    		.transition()
+    		.transition()    		
     		.duration(250)
     		.call(xaxis)
+
+		svg.select(".y.axis")
+    		.transition()    		
+    		.duration(250)
+    		.call(yaxis)
     		
 		svg.select(".x.axis")
 			.selectAll("text")  
@@ -459,22 +398,8 @@ d3.json(url, function(data){
                 return "rotate(" + tickrotation + ")" 
             });
 
-        svg.selectAll(".line").remove();
-        svg.selectAll(".circle").remove();
-
-		for (var i = 0; i < viewdata[0].y.length; i++)
-			drawData(i);
-
 	};
 
-
-	var valueline = d3.svg.line();
-	var lines;
-	var circles = svg.selectAll("circle");
-
-
-	for (var i = 0; i < viewdata[0].y.length; i++)
-		drawData(i);
 
 	function getColorIndex(y_accessor){
 			var colorindex = y_accessor;
@@ -487,105 +412,8 @@ d3.json(url, function(data){
 		   	
 		   	color = colors[colorindex];
 		   	return color;
-		}       	
-
-    function drawData(y_accessor){
-    	//If no y_accessor was defined, the data is assumed to contain only one dataset.
-    	//the y_accessor then becomes obsolete.
-    	y_accessor = (typeof y_accessor == "undefined") ? "singleData" : y_accessor;
-    	//Describes a line for each dataset.
-		valueline = d3.svg.line()
-					  .interpolate(interpolation)
-					  .x(function (d) {
-					  		
-					  		if (scales[0] == 'date') {
-					  			d.x = getDateFromTime(d.x);
-					  		};
-					  		return xScale(d.x);
-					  })
-					  .y(function (d) {
-
-					  		var y_value;
-
-					  		if (d.y instanceof Array){
-					  			y_value = d.y[y_accessor];
-					  		} else {
-					  			y_value = d.y;
-					  		};
-					  		
-					  		return height - yScale(y_value);
-					  });
-
-		
-	   	
-	   	
-	    //sellectAll("path") causes a path element to be added for each data array
-		//member. So call the line method on each data entry in the data for this
-		//one "path"-element. The d-attribute of SVG usualy contains a string with a series of path
-		//descriptions.
-		lines = svg.append("path")
-				   .datum(viewdata)
-				   .attr("class", "line")
-				   .style("stroke", getColorIndex(y_accessor))
-				   .attr("d", valueline);
-
-	    function drawCircleHighlights(index){
-
-	    	circles = svg.append("circle")
-	    			 .datum(viewdata)
-	    			 .attr("class", "circle")
-	    			 .transition()
-	    			 .duration(200)
-	    			 .attr("cx", function(d) {
-	    			 	return xScale(d[index].x);
-	    			 })
-	    			 .attr("cy", function(d) {
-	    			 	return height - yScale(d[index].y[y_accessor]);
-	    			 })
-	    			 .attr("r", highlightradius)
-	    			 //.attr("index", index)
-	    			 .attr("xvalue", function(d){
-	    			 	return d[index].x;
-	    			 })
-	    			 .attr("yvalue", function(d){
-	    			 	return d[index].y[y_accessor];
-	    			 })
-	    			 .attr("y_accessor", y_accessor)
-	    			 .attr("opacity", 0)
-	    			 .attr("fill", getColorIndex(y_accessor));	    		
-	    }
-		
-		for (var i = 0; i < viewdata.length; i++)
-			drawCircleHighlights(i);
-	    
-	    
-
-	 
-
-	    svg.selectAll("circle")
-	    	.on("mouseover", function(){
-		    	var xvalue = d3.select(this).attr("xvalue");
-		    	var yvalue = d3.select(this).attr("yvalue");
-		    	var circlex = d3.select(this).attr("cx");
-		    	var circley = d3.select(this).attr("cy");
-		    	var accessor = d3.select(this).attr("y_accessor");
-
-
-		    	var values = [xvalue, yvalue];
-		    	var position = [circlex, circley];
-		    	var coords = d3.mouse(this);
-
-		    	d3.select(this).transition()
-		    	.duration(500)
-		    	.attr('opacity', 1)
-		    	.each('end', showTooltip(coords, values, position, accessor));
-		    })
-		    .on("mouseout", function(){
-		    	d3.select(this).transition().
-		    	attr('opacity', 0);
-		    	hideTooltip();
-		    });
-    };
+		}  	
+    
 
    function hideTooltip(){
     	tooltip.transition()
@@ -594,10 +422,11 @@ d3.json(url, function(data){
     	.style("top", 0 + "px");
     }
 
-    function showTooltip(coords, values, position, accessor){
+    function showTooltip(values, position, accessor){
+	    	//console.log("tooltip")
 	    	var keyindex = parseInt(accessor) + 1;
 	    	
-	    	tooltip.text(datakeys[0] + ": " + values[0] + " " + datakeys[keyindex] + ": " + values[1])
+	    	tooltip.text(values[1] + ": " + values[0])
 	    		   .style("left", (position[0] + "px"))
 	    		   .transition()
 	    		   .delay(600)
@@ -605,7 +434,7 @@ d3.json(url, function(data){
 	    		   .style("opacity", 1.0)
 	    		   .style("position", "absolute")	    		   
 	    		   .style("background-color", getColorIndex(accessor))
-	    		   .style("top", ((position[1] - (2 * highlightradius)) + "px"));
+	    		   .style("top", (position[1] + "px"));
 
 	    }
 

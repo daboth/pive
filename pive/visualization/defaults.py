@@ -95,5 +95,5 @@ prefix = 'K'
 ####################
 iconcolor = '#FF2C00'
 iconhighlight = '#FF8B73'
-chartcolors = colorthemes.pive_theme
+chartcolors = colorthemes.certitude_theme
 
