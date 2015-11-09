@@ -45,12 +45,11 @@ var iso = d3.time.format.utc('{{ t_iso }}');
 var scales = {{ t_scales }};
 var colors = {{ t_colors }};
 var tickrotation = -45;
-var circleopacity = {{ t_circleopacity }};
+var highlightradius = 8;
+var circleradius = {{ t_circleradius }};
 var highlightfactor = {{ t_highlightfactor }};
-var minradius = {{ t_minradius }};
-var maxradius = {{ t_maxradius }};
+var circleopacity = {{ t_circleopacity }};
 var div_hook = '{{ t_div_hook }}';
-
 
 var hashtag = '#';
 var hash_div_hook = hashtag.concat(div_hook);
@@ -100,42 +99,20 @@ d3.json(url, function(data){
     
     //Determines the maximum y-value considering each datapoints maximum.
     var max_y = d3.max(data, function(d){
-    	var datapoint_max = d.y[0][0];
+    	var datapoint_max = d.y[0];
     	for (var i = 0; i < d.y.length; i++)
-    		if (d.y[i][0] > datapoint_max){
-    			datapoint_max = d.y[i][0];
+    		if (d.y[i] > datapoint_max){
+    			datapoint_max = d.y[i];
     		}
 		return datapoint_max;
     });
-
-    var max_radius = d3.max(data, function(d){
-    	var datapoint_max = d.y[0][1];
-    	for (var i = 1; i < d.y.length; i++)
-    		if (d.y[i][1] > datapoint_max){
-    			datapoint_max = d.y[i][1];
-    		}
-		return datapoint_max;
-    });
-
-    console.log(max_y);
-    console.log(max_radius);
 
     //Determines the minimum y-value considering each datapoints minimum.
     var min_y = d3.min(data, function(d){
-    	var datapoint_min = d.y[0][0];
+    	var datapoint_min = d.y[0];
     	for (var i = 0; i < d.y.length; i++)
-    		if (d.y[i][0] < datapoint_min){
-    			datapoint_min = d.y[i][0];
-    		}
-		return datapoint_min;
-    });
-
-    //Determines the minimum y-value considering each datapoints minimum.
-    var min_radius = d3.min(data, function(d){
-    	var datapoint_min = d.y[0][1];
-    	for (var i = 0; i < d.y.length; i++)
-    		if (d.y[i][1] < datapoint_min){
-    			datapoint_min = d.y[i][1];
+    		if (d.y[i] < datapoint_min){
+    			datapoint_min = d.y[i];
     		}
 		return datapoint_min;
     });
@@ -143,24 +120,14 @@ d3.json(url, function(data){
     //The extent of all datapoint values consists of their minima and maxima.
     var x_extent = d3.extent(viewdata, function(d){ return d.x});
     var y_extent = [min_y, max_y];
-    var radius_extent = [min_radius, max_radius]
+    console.log(y_extent);
+    console.log(x_extent);
     var xScale;
     var yScale;
     var yAxisScale;
-    var circleScale;
 
     scaleXAxis();
     scaleYAxis();
-    scaleCircle(minradius, maxradius);
-
-    function scaleCircle(minradius, maxradius){
-
-    	var circlerange = [minradius, maxradius];
-    	circleScale = d3.scale.linear()
-    					.range(circlerange)
-    					.domain(radius_extent);
-    };
-
    
     //Creates a new date object of a given timestamp.
     function getDateFromTime(time){
@@ -191,17 +158,19 @@ d3.json(url, function(data){
     			xScale = d3.scale.linear()
         			   .range(xrange)          			   
         			   .domain(x_extent);
+    			
     		} else {
     			xScale = d3.scale.log()
         			   .range(xrange)          			   
         			   .domain(x_extent);
-    		}
+        			}
 
     		
     	} else if (scales[0].substring(0,3) == 'pow') {	
     		
     		//The exponent of the power scale is indicated by a number
     		//following the 'pow', e.g. 'pow2'.
+    		//console.log(scales[0].length)
     		exp = parseInt(scales[0].substring(3, scales[0].length));
     		
     		//Provide a power scaling.
@@ -237,8 +206,7 @@ d3.json(url, function(data){
     			   .domain(y_extent);
 
     	} else if (scales[1] == 'log') {
-
-    		if (y_extent[0] <= 0){
+    		if (y_extent[0] <= 0){    			
     			yScale = d3.scale.linear()
     			   .range([padding + labelsize, height - padding])
     			   .domain(y_extent);
@@ -249,11 +217,10 @@ d3.json(url, function(data){
     			yScale = d3.scale.log()
         			   .range([padding + labelsize, height - padding])         			   
         			   .domain(y_extent);
-		   		 yAxisScale = d3.scale.log()
+		    	yAxisScale = d3.scale.log()
         			   .range([height - padding, padding + labelsize])         			   
         			   .domain(y_extent);
     		}
-
     		
     	} else if (scales[1].substring(0,3) == 'pow') {	
     		
@@ -318,7 +285,7 @@ d3.json(url, function(data){
 
 	function initializeYAxis() {
 		yaxis.orient('left')	    			
-    		 .scale(yAxisScale); 
+    		 .scale(yAxisScale);
 
 	};
 
@@ -433,7 +400,6 @@ d3.json(url, function(data){
 		} else {
 			viewdata = dataset.slice(current_offset, current_offset + viewport);
 		};
-		
 
 		x_extent = d3.extent(viewdata, function(d){ return d.x});
 
@@ -460,7 +426,6 @@ d3.json(url, function(data){
 		} else {
 			viewdata = dataset.slice(current_offset, current_offset + viewport);
 		};
-		
 
 		x_extent = d3.extent(viewdata, function(d){ return d.x});
 
@@ -524,7 +489,7 @@ d3.json(url, function(data){
     	//If no y_accessor was defined, the data is assumed to contain only one dataset.
     	//the y_accessor then becomes obsolete.
     	console.log(scales)
-    	y_accessor = (typeof y_accessor == "undefined") ? 1 : y_accessor;
+    	y_accessor = (typeof y_accessor == "undefined") ? "singleData" : y_accessor;
     	
 	    function drawCircles(index){
 
@@ -538,16 +503,14 @@ d3.json(url, function(data){
 	    			 	return xScale(d[index].x);
 	    			 })
 	    			 .attr("cy", function(d) {
-	    			 	return height - yScale(d[index].y[y_accessor][0]);
+	    			 	return height - yScale(d[index].y[y_accessor]);
 	    			 })
-	    			 .attr("r", function(d){
-	    			 	return circleScale(d[index].y[y_accessor][1]);
-	    		 	 })
+	    			 .attr("r", circleradius)
 	    			 .attr("xvalue", function(d){
 	    			 	return d[index].x;
 	    			 })
 	    			 .attr("yvalue", function(d){
-	    			 	return d[index].y[y_accessor][0];
+	    			 	return d[index].y[y_accessor];
 	    			 })
 	    			 .attr("y_accessor", y_accessor)
 	    			 .attr("opacity", circleopacity)
@@ -577,13 +540,13 @@ d3.json(url, function(data){
 		    	d3.select(this).transition()
 		    	.duration(500)
 		    	.attr('opacity', (circleopacity / 2))
-		    	.attr('r', d3.select(this).attr('r') * highlightfactor)
+		    	.attr('r', highlightfactor)
 		    	.each('end', showTooltip(coords, values, position, accessor));
 		    })
 		    .on("mouseout", function(){
 		    	d3.select(this).transition()
 		    	.attr('opacity', circleopacity)
-		    	.attr('r', d3.select(this).attr('r') / highlightfactor);
+		    	.attr('r', circleradius);
 		    	hideTooltip();
 		    });
     };
@@ -606,7 +569,7 @@ d3.json(url, function(data){
 	    		   .style("opacity", 1.0)
 	    		   .style("position", "absolute")	    		   
 	    		   .style("background-color", getColorIndex(accessor))
-	    		   .style("top", ((position[1] - (maxradius)) + "px"));
+	    		   .style("top", ((position[1] - (2 * highlightfactor)) + "px"));
 
 	    }
 

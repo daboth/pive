@@ -51,9 +51,11 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
         # Metadata
         self.__title = 'scatterchart'
+        self.__template_name = 'scatterchart'
         self.__dataset = dataset
-        self.__template_url = '%s%s%s' % (realpath, default.template_path, template_name)
+        self.__template_url = '%s%s' % (realpath, default.template_path)
         self.__datakeys = []
+        self.__version = default.p_version
 
         # Visualization properties.
         self.__width = width
@@ -153,16 +155,10 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
     def setScales(self, scales):
         self.__scales = scales
 
-    def create_css(self, template):
-        templateVars = {'t_font_size': self.__font_size,
-                        't_shape_rendering': self.__shape_rendering,
-                        't_line_stroke': self.__line_stroke}
-
-        outputText = template.render(templateVars)
-        return outputText
 
     def create_html(self, template):
-        templateVars = {'t_title': self.__title}
+        templateVars = {'t_title': self.__title,
+                        't_div_hook': self._div_hook}
 
         outputText = template.render(templateVars)
         return outputText
@@ -189,7 +185,12 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
                         't_circleradius': self.__circleradius,
                         't_highlightfactor': self.__circlehighlightradius,
                         't_circleopacity': self.__circleopacity,
-                        't_div_hook': self._div_hook}
+                        't_div_hook': self._div_hook,
+                        't_font_size': self.__font_size,
+                        't_shape_rendering': self.__shape_rendering,
+                        't_line_stroke': self.__line_stroke,
+                        't_pive_version' : self.__version,
+                        't_axis_label_size' : self.__label_size}
 
         outputText = template.render(templateVars)
         print (self.__datakeys)
@@ -214,18 +215,16 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
 
     def create_visualization_files(self, destination_url):
-        html_template = self.load_template_file('%s/html.jinja' % (self.__template_url))
-        css_template = self.load_template_file('%s/css.jinja' % (self.__template_url))
-        js_template = self.load_template_file('%s/js.jinja' % (self.__template_url))
+
+        html_template = self.load_template_file('%shtml.jinja' % (self.__template_url))
+        js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
 
         dataset_url = '%s.json' % (self.__title)
 
         js = self.create_js(js_template, dataset_url)
         html = self.create_html(html_template)
-        css = self.create_css(css_template)
 
         self.write_file(html, destination_url, '/%s.html' % (self.__title))
-        self.write_file(css, destination_url, '/%s.css' % (self.__title))
         self.write_file(js, destination_url, '/%s.js' % (self.__title))
 
         visdata = self.generate_visualization_dataset(self.__dataset)
@@ -274,7 +273,7 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
     def load_template_file(self, template_url):
         templateLoader = jinja2.FileSystemLoader(searchpath=[default.template_path, '/'])
-        print ("Opening template: %s/%s" % (default.template_path, template_url))
+        print ("Opening template: %s" % (template_url))
 
         templateEnv = jinja2.Environment(loader=templateLoader)
         TEMPLATE_FILE = template_url
