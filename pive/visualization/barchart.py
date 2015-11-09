@@ -54,6 +54,8 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         self.__datakeys = []
         self.__version = default.p_version
 
+        print (self.__template_url)
+
         # Visualization properties.
         self.__width = width
         self.__height = height
@@ -243,7 +245,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
 
     def load_template_file(self, template_url):
         templateLoader = jinja2.FileSystemLoader(searchpath=[default.template_path, '/'])
-        print ("Opening template: %s/%s" % (default.template_path, template_url))
+        print ("Opening template: %s" % (template_url))
 
         templateEnv = jinja2.Environment(loader=templateLoader)
         TEMPLATE_FILE = template_url

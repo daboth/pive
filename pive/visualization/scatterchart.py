@@ -63,6 +63,7 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         self.__jumplength = jumplength
         self.__xlabel = default.xlabel
         self.__ylabel = default.ylabel
+        self.__label_size = default.label_size
 
         if times:
             self.__scales = default.timescales

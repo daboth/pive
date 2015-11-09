@@ -57,6 +57,8 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         self.__datakeys = []
         self.__version = default.p_version
 
+        print (self.__template_url)
+
         # Visualization properties.
         self.__width = width
         self.__height = height
