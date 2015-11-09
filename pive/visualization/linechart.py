@@ -206,9 +206,8 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
 
     def create_visualization_files(self, destination_url):
-        #template = load_template_file(template_url)
+
         html_template = self.load_template_file('%shtml.jinja' % (self.__template_url))
-        #css_template = self.load_template_file('%s/css.jinja' % (self.__template_url))
         js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
 
         dataset_url = '%s.json' % (self._title)
