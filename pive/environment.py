@@ -74,10 +74,15 @@ class Environment(object):
     # Load the dataset utilizing the internal input manager.
     def load(self, source):
         """Loads data from a source."""
-        inputdata = self.__inputmanager.read(source)
-        self.__suitables = self.__inputmanager.map(inputdata)
+        try:
+            inputdata = self.__inputmanager.read(source)
+            self.__suitables = self.__inputmanager.map(inputdata)
+            self.__data = inputdata
+        except ValueError as e:
+            print ("Failed: %s" % e.message)
+            return []
+
         self.__modules = self.import_suitable_visualizations(self.__suitables)
-        self.__data = inputdata
         self.__has_datefields = self.__inputmanager.has_date_points()
         # Converting the datakeys into strings.
         self.__datakeys = [str(i) for i in list(self.__data[0].keys())]
@@ -104,7 +109,7 @@ class Environment(object):
     def choose(self, chart):
         """Choose a chart from the suitable visualizations."""
         if chart not in self.__suitables:
-            raise ValueError("Visualization not allowed.")
+            raise ValueError("Visualization not possible.")
 
         # Automatically create the chart instance and
         # return it to the user.

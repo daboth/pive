@@ -33,6 +33,7 @@ from . import consistenceprofiler as profiler
 from . import visualizationmapper as vizmapper
 
 NOT_CONSISTENT_ERR_MSG = "Data is not consistent."
+NO_DATA_LOADED_ERR_MSG = "The data source could not be read or is empty."
 
 
 class InputManager(object):
@@ -46,9 +47,16 @@ class InputManager(object):
     def read(self, source):
         """Reads the input source."""
         inputdata = reader.load_input_source(source)
+
+        # Raise an error if the data source is empty or nor readable.
+        if not inputdata:
+            raise ValueError(NO_DATA_LOADED_ERR_MSG)
+
         dataset = self.__validate_input(inputdata)
+        # Raise an error if the dataset is not consistent.
         if not self.__is_dataset_consistent(dataset):
             raise ValueError(NOT_CONSISTENT_ERR_MSG)
+
         return dataset
 
     def map(self, dataset):

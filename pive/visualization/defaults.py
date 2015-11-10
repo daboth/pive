@@ -41,7 +41,7 @@ config_path = '/visualization/config/'
 # Div container in which the visualization will be placed.
 div_hook = 'body'
 # pive version
-p_version = '0.2.3'
+p_version = '0.3.3'
 
 ####################
 ## Default Values ##
