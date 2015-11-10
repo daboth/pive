@@ -33,7 +33,7 @@ from . import consistenceprofiler as profiler
 from . import visualizationmapper as vizmapper
 
 NOT_CONSISTENT_ERR_MSG = "Data is not consistent."
-NO_DATA_LOADED_ERR_MSG = "The data source could not be read or is empty."
+NO_DATA_LOADED_ERR_MSG = "Unexpected data source."
 
 
 class InputManager(object):

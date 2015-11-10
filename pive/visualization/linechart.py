@@ -121,8 +121,6 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
     def generate_visualization_dataset(self, dataset):
         """Basic Method."""
-
-
         visdataset = []
 
         for datapoint in dataset:
@@ -204,6 +202,15 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
         f.close()
 
+    def get_js_code(self):
+        dataset_url = '%s.json' % (self._title)
+        js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
+        js = self.create_js(js_template, dataset_url)
+        return js
+
+    def get_json_dataset(self):
+        return self.generate_visualization_dataset(self.__dataset)
+
 
     def create_visualization_files(self, destination_url):
 
@@ -214,10 +221,8 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
         js = self.create_js(js_template, dataset_url)
         html = self.create_html(html_template)
-        #css = self.create_css(css_template)
 
         self.write_file(html, destination_url, '/%s.html' % (self._title))
-        #self.write_file(css, destination_url, '/%s.css' % (self._title))
         self.write_file(js, destination_url, '/%s.js' % (self._title))
 
         visdata = self.generate_visualization_dataset(self.__dataset)

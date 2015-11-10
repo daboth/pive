@@ -39,7 +39,7 @@ output_path = '%s/output' % (sys.path[0])
 # Path where pive locates the visualizations config file.
 config_path = '/visualization/config/'
 # Div container in which the visualization will be placed.
-div_hook = 'body'
+div_hook = 'chart'
 # pive version
 p_version = '0.3.3'
 

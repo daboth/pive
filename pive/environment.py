@@ -79,8 +79,8 @@ class Environment(object):
             self.__suitables = self.__inputmanager.map(inputdata)
             self.__data = inputdata
         except ValueError as e:
-            print ("Failed: %s" % e.message)
-            return []
+            print ("Failed to load the dataset: %s" % e)
+            raise
 
         self.__modules = self.import_suitable_visualizations(self.__suitables)
         self.__has_datefields = self.__inputmanager.has_date_points()
@@ -128,7 +128,17 @@ class Environment(object):
         chart_decision.setDataKeys(self.__datakeys)
         return chart_decision
 
-    # Render the chart by creating all visualization files.
+
     def render(self, chart):
-        """Render the chart."""
+        """Renders the chart and creates
+        all files to display the visualization
+        under the environments output path."""
         chart.create_visualization_files(self.__outputpath)
+
+    def render_code(self, chart):
+        """Renders the chart and returns the javascript
+        code and its json dataset to include the
+        visualization in another document."""
+        js = chart.get_js_code()
+        data = chart.get_json_dataset()
+        return (js, data)
