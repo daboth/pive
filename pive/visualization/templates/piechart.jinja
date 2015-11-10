@@ -86,8 +86,6 @@ d3.json(url, function(data){
 	} else {
 		radius = (height - padding) / 2;
 	}
-	
-	console.log(dataset);
 
 	var total = d3.sum(dataset, function(d){
 		return d.value;
