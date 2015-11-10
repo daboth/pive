@@ -1,98 +1,98 @@
-{# Copyright (c) 2014 - 2015, David Bothe                                       #}
-{# All rights reserved.                                                         #}
-{#                                                                              #}
-{# Redistribution and use in source and binary forms, with or without           #}
-{# modification, are permitted provided that the following conditions are met:  #}
-{#                                                                              #}
-{# 1. Redistributions of source code must retain the above copyright notice,    #}
-{# this list of conditions and the following disclaimer.                        #}
-{#                                                                              #}
-{# 2. Redistributions in binary form must reproduce the above copyright notice, #}
-{# this list of conditions and the following disclaimer in the documentation    #}
-{# and/or other materials provided with the distribution.                       #}
-{#                                                                              #}
-{# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  #}
-{# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE    #}
-{# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE   #}
-{# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE    #}
-{# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR          #}
-{# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF         #}
-{# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS     #}
-{# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN      #}
-{# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)      #}
-{# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE   #}
-{# POSSIBILITY OF SUCH DAMAGE.                                                  #}
 
-//Created with pive {{ t_pive_version }} - the python interactive visualization environment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Created with pive 0.3.3 - the python interactive visualization environment.
 //Visit https://github.com/daboth/pive for more information.
 
-var width = {{ t_width }};
-var height = {{ t_height }};	
-var padding	= {{ t_padding }};
-var labelsize = {{ t_axis_label_size }};
-var viewport = {{ t_viewport }};	
-var jumplength = {{ t_jumplength }};
-var xlabel = '{{t_xlabel}}';
-var ylabel = '{{t_ylabel}}';
-var datakeys = {{ t_datakeys }};
-var timeformat = '{{ t_timeformat }}';
-var iconwidth = {{ t_iconwidth }};
-var iconheight = {{ t_iconheight }};
-var iconcolor = '{{ t_iconcolor }}';
-var iconhighlight = '{{ t_iconhighlight }}';
-var verticalscale = '{{ t_verticalscale }}';
+var width = 900;
+var height = 600;	
+var padding	= 60;
+var labelsize = 18;
+var viewport = 50;	
+var jumplength = 10;
+var xlabel = 'X';
+var ylabel = 'Y';
+var datakeys = ['1', '2'];
+var timeformat = '';
+var iconwidth = 20;
+var iconheight = 40;
+var iconcolor = '#FF2C00';
+var iconhighlight = '#FF8B73';
+var verticalscale = 'linear';
 var barbreak = 0.2;
-var div_hook = '{{ t_div_hook }}';
+var div_hook = 'chart';
 
-var url = '{{ t_url }}';
-var threshold = '{{ t_threshold }}';
+var url = 'barchart_sample.json';
+var threshold = '1';
 var filter;
 
 if ((width / viewport) < threshold){
 	filter = parseInt(threshold * (viewport / width));
 };
 
-{# Tick label rotation and highlights radius are fixed. #}
-var colors = {{ t_colors }};
+
+var colors = ['#FF2C00', '#00B945', '#BF4930', '#238B49', '#A61D00', '#00782D', '#FF6140', '#37DC74', '#FF8B73', '#63DC90'];
 var tickrotation = -45;
 
 var hashtag = '#';
 var hash_div_hook = hashtag.concat(div_hook);
 
-{# ############################# #}
-{# CSS inline styles definition. #}
-{# Essential when including into #}
-{# another div container.        #}
-{# ############################# #}
 
-{# Acquire the div container that includes the visualization. #}
+
+
+
+
+
+
 var root_div = document.getElementById(div_hook);
 
-{# JavaScript String is immutable, so single strings are defined for readability. #}
-var css_line = '#{{ t_div_hook }} .line { stroke: {{ t_line_stroke }}; fill: none; stroke-width: 2.5px}\n',
-    css_tooltip = '#{{ t_div_hook }} .tooltip {color: white; line-height: 1; padding: 12px; font-weight: italic; font-family: arial; border-radius: 5px;}\n';
-    css_axis_path = '#{{ t_div_hook }} .axis path { fill: none; stroke: {{ t_line_stroke }}; shape-rendering: crispEdges;}\n',
-    css_axis_line = '#{{ t_div_hook }} .axis line { stroke: {{ t_line_stroke }}; shape-rendering: {{ t_shape_rendering }};}\n',
-    css_path_area = '#{{ t_div_hook }} .path area { fill: blue; }\n';
-    css_axis_text = '#{{ t_div_hook }} .axis text {font-family: sans-serif; font-size: {{ t_font_size }}px }\n',
-    css_xlabel_text = '#{{ t_div_hook }} .xlabel {font-family: helvetica; font-size: {{ t_axis_label_size }}px }\n',
-    css_ylabel_text = '#{{ t_div_hook }} .ylabel {font-family: helvetica; font-size: {{ t_axis_label_size }}px }\n',
-    css_x_axis_line = '#{{ t_div_hook }} .x.axis line { stroke: grey; stroke-opacity: 0.25; stroke-width: 2.5px}\n',
-    css_y_axis_line = '#{{ t_div_hook }} .y.axis line { stroke: grey; stroke-opacity: 0.25; stroke-width: 2.5px}';
 
-{# The style definitions are concatinated into a single string. #}
+var css_line = '#chart .line { stroke: black; fill: none; stroke-width: 2.5px}\n',
+    css_tooltip = '#chart .tooltip {color: white; line-height: 1; padding: 12px; font-weight: italic; font-family: arial; border-radius: 5px;}\n';
+    css_axis_path = '#chart .axis path { fill: none; stroke: black; shape-rendering: crispEdges;}\n',
+    css_axis_line = '#chart .axis line { stroke: black; shape-rendering: optimizeSpeed;}\n',
+    css_path_area = '#chart .path area { fill: blue; }\n';
+    css_axis_text = '#chart .axis text {font-family: sans-serif; font-size: 16px }\n',
+    css_xlabel_text = '#chart .xlabel {font-family: helvetica; font-size: 18px }\n',
+    css_ylabel_text = '#chart .ylabel {font-family: helvetica; font-size: 18px }\n',
+    css_x_axis_line = '#chart .x.axis line { stroke: grey; stroke-opacity: 0.25; stroke-width: 2.5px}\n',
+    css_y_axis_line = '#chart .y.axis line { stroke: grey; stroke-opacity: 0.25; stroke-width: 2.5px}';
+
+
 var css = css_line.concat(css_tooltip).concat(css_axis_path).concat(css_axis_line).concat(css_path_area).concat(css_axis_text)
           .concat(css_xlabel_text).concat(css_ylabel_text).concat(css_x_axis_line).concat(css_y_axis_line);
 
-{# The style element in the dom is created and included into the root div. #}
+
 var style = document.createElement('style');
 style.type = 'text/css';
 style.appendChild(document.createTextNode(css));
 root_div.appendChild(style);
 
-{# ############################# #}
-{# Begin of D3.js Visualization. #}
-{# ############################# #}
+
+
+
 
 d3.json(url, function(data){
 	//The complete dataset.
@@ -167,9 +167,9 @@ d3.json(url, function(data){
 	    };
     };
 
-    {# Drawing the initial SVG containing the chart by selecting the specific div element of the DOM #}
-	{# and appending a svg tag with the following attributes. The selection is saved as a variable   #}
-	{# for later reference.                                                                          #}
+    
+	
+	
 	var svg = d3.select(hashtag.concat(div_hook)).append("svg")
 				.attr("width", width)							
 				.attr("height", height);

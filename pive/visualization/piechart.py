@@ -180,7 +180,3 @@ class Chart(bv.BaseVisualization):
         TEMPLATE_FILE = template_url
         template = templateEnv.get_template(TEMPLATE_FILE)
         return template
-
-	
-
- 

@@ -1,0 +1,498 @@
+[
+    {
+        "from": "G1",
+        "to": "G2",
+        "weight": 150
+    },
+    {
+        "from": "G1",
+        "to": "G3",
+        "weight": 12150
+    },
+    {
+        "from": "G1",
+        "to": "G4",
+        "weight": 360
+    },
+    {
+        "from": "G1",
+        "to": "G5",
+        "weight": 24127
+    },
+    {
+        "from": "G1",
+        "to": "G1",
+        "weight": 1310
+    },
+    {
+        "from": "G1",
+        "to": "G10",
+        "weight": 2345
+    },
+    {
+        "from": "G1",
+        "to": "G8",
+        "weight": 3650
+    },
+    {
+        "from": "G2",
+        "to": "G1",
+        "weight": 2190
+    },
+    {
+        "from": "G2",
+        "to": "G2",
+        "weight": 1519
+    },
+    {
+        "from": "G2",
+        "to": "G3",
+        "weight": 2745
+    },
+    {
+        "from": "G2",
+        "to": "G4",
+        "weight": 1234
+    },
+    {
+        "from": "G2",
+        "to": "G5",
+        "weight": 3167
+    },
+    {
+        "from": "G2",
+        "to": "G6",
+        "weight": 2167
+    },
+    {
+        "from": "G2",
+        "to": "G7",
+        "weight": 2345
+    },
+    {
+        "from": "G2",
+        "to": "G8",
+        "weight": 1550
+    },
+    {
+        "from": "G2",
+        "to": "G9",
+        "weight": 3550
+    },
+    {
+        "from": "G2",
+        "to": "G10",
+        "weight": 2150
+    },
+    {
+        "from": "G2",
+        "to": "G11",
+        "weight": 4100
+    },
+    {
+        "from": "G2",
+        "to": "G12",
+        "weight": 2116
+    },
+    {
+        "from": "G2",
+        "to": "G13",
+        "weight": 987
+    },
+    {
+        "from": "G2",
+        "to": "G14",
+        "weight": 234
+    },
+    {
+        "from": "G1",
+        "to": "G10",
+        "weight": 5754
+    },
+    {
+        "from": "G3",
+        "to": "G1",
+        "weight": 1423
+    },
+    {
+        "from": "G3",
+        "to": "G2",
+        "weight": 3312
+    },
+    {
+        "from": "G3",
+        "to": "G3",
+        "weight": 2123
+    },
+    {
+        "from": "G3",
+        "to": "G6",
+        "weight": 565
+    },
+    {
+        "from": "G3",
+        "to": "G7",
+        "weight": 4312
+    },
+    {
+        "from": "G3",
+        "to": "G8",
+        "weight": 14789
+    },
+    {
+        "from": "G3",
+        "to": "G10",
+        "weight": 289
+    },
+    {
+        "from": "G4",
+        "to": "G1",
+        "weight": 132
+    },
+    {
+        "from": "G4",
+        "to": "G2",
+        "weight": 3132
+    },
+    {
+        "from": "G4",
+        "to": "G4",
+        "weight": 331
+    },
+    {
+        "from": "G4",
+        "to": "G6",
+        "weight": 232
+    },
+    {
+        "from": "G4",
+        "to": "G7",
+        "weight": 1653
+    },
+    {
+        "from": "G4",
+        "to": "G8",
+        "weight": 3644
+    },
+    {
+        "from": "G5",
+        "to": "G2",
+        "weight": 11312
+    },
+    {
+        "from": "G5",
+        "to": "G10",
+        "weight": 65
+    },
+    {
+        "from": "G5",
+        "to": "G4",
+        "weight": 3543
+    },
+    {
+        "from": "G5",
+        "to": "G5",
+        "weight": 2312
+    },
+    {
+        "from": "G5",
+        "to": "G6",
+        "weight": 87
+    },
+    {
+        "from": "G5",
+        "to": "G7",
+        "weight": 4896
+    },
+    {
+        "from": "G6",
+        "to": "G1",
+        "weight": 2355
+    },
+    {
+        "from": "G6",
+        "to": "G2",
+        "weight": 1355
+    },
+    {
+        "from": "G6",
+        "to": "G3",
+        "weight": 665
+    },
+    {
+        "from": "G6",
+        "to": "G9",
+        "weight": 98
+    },
+    {
+        "from": "G6",
+        "to": "G4",
+        "weight": 6165
+    },
+    {
+        "from": "G6",
+        "to": "G5",
+        "weight": 17265
+    },
+    {
+        "from": "G6",
+        "to": "G7",
+        "weight": 465
+    },
+    {
+        "from": "G6",
+        "to": "G10",
+        "weight": 3165
+    },
+    {
+        "from": "G6",
+        "to": "G8",
+        "weight": 58
+    },
+    {
+        "from": "G7",
+        "to": "G3",
+        "weight": 456
+    },
+    {
+        "from": "G7",
+        "to": "G2",
+        "weight": 814
+    },
+    {
+        "from": "G7",
+        "to": "G13",
+        "weight": 23314
+    },
+    {
+        "from": "G7",
+        "to": "G4",
+        "weight": 265
+    },
+    {
+        "from": "G7",
+        "to": "G14",
+        "weight": 14265
+    },
+    {
+        "from": "G7",
+        "to": "G12",
+        "weight": 2456
+    },
+    {
+        "from": "G7",
+        "to": "G9",
+        "weight": 4456
+    },
+    {
+        "from": "G7",
+        "to": "G5",
+        "weight": 678
+    },
+    {
+        "from": "G7",
+        "to": "G6",
+        "weight": 13665
+    },
+    {
+        "from": "G7",
+        "to": "G7",
+        "weight": 522
+    },
+    {
+        "from": "G8",
+        "to": "G1",
+        "weight": 2356
+    },
+    {
+        "from": "G8",
+        "to": "G2",
+        "weight": 2546
+    },
+    {
+        "from": "G8",
+        "to": "G3",
+        "weight": 231
+    },
+    {
+        "from": "G8",
+        "to": "G4",
+        "weight": 6578
+    },
+    {
+        "from": "G8",
+        "to": "G5",
+        "weight": 666
+    },
+    {
+        "from": "G8",
+        "to": "G6",
+        "weight": 567
+    },
+    {
+        "from": "G8",
+        "to": "G7",
+        "weight": 3963
+    },
+    {
+        "from": "G8",
+        "to": "G8",
+        "weight": 342
+    },
+    {
+        "from": "G9",
+        "to": "G1",
+        "weight": 31456
+    },
+    {
+        "from": "G9",
+        "to": "G2",
+        "weight": 1456
+    },
+    {
+        "from": "G9",
+        "to": "G4",
+        "weight": 34
+    },
+    {
+        "from": "G9",
+        "to": "G5",
+        "weight": 5234
+    },
+    {
+        "from": "G9",
+        "to": "G7",
+        "weight": 345
+    },
+    {
+        "from": "G9",
+        "to": "G8",
+        "weight": 456
+    },
+    {
+        "from": "G9",
+        "to": "G9",
+        "weight": 4123
+    },
+    {
+        "from": "G10",
+        "to": "G1",
+        "weight": 76
+    },
+    {
+        "from": "G10",
+        "to": "G2",
+        "weight": 876
+    },
+    {
+        "from": "G10",
+        "to": "G3",
+        "weight": 34
+    },
+    {
+        "from": "G10",
+        "to": "G9",
+        "weight": 567
+    },
+    {
+        "from": "G10",
+        "to": "G10",
+        "weight": 15344
+    },
+    {
+        "from": "G10",
+        "to": "G13",
+        "weight": 15674
+    },
+    {
+        "from": "G11",
+        "to": "G3",
+        "weight": 456
+    },
+    {
+        "from": "G11",
+        "to": "G2",
+        "weight": 456
+    },
+    {
+        "from": "G11",
+        "to": "G5",
+        "weight": 123
+    },
+    {
+        "from": "G11",
+        "to": "G7",
+        "weight": 4356
+    },
+    {
+        "from": "G11",
+        "to": "G4",
+        "weight": 124
+    },
+    {
+        "from": "G12",
+        "to": "G7",
+        "weight": 4765
+    },
+    {
+        "from": "G12",
+        "to": "G2",
+        "weight": 1765
+    },
+    {
+        "from": "G12",
+        "to": "G5",
+        "weight": 34
+    },
+    {
+        "from": "G12",
+        "to": "G4",
+        "weight": 45
+    },
+    {
+        "from": "G12",
+        "to": "G3",
+        "weight": 312
+    },
+    {
+        "from": "G13",
+        "to": "G3",
+        "weight": 1234
+    },
+    {
+        "from": "G13",
+        "to": "G2",
+        "weight": 934
+    },
+    {
+        "from": "G13",
+        "to": "G4",
+        "weight": 15678
+    },
+    {
+        "from": "G13",
+        "to": "G9",
+        "weight": 1563
+    },
+    {
+        "from": "G14",
+        "to": "G9",
+        "weight": 11563
+    },
+    {
+        "from": "G14",
+        "to": "G2",
+        "weight": 1563
+    },
+    {
+        "from": "G14",
+        "to": "G6",
+        "weight": 12563
+    },
+    {
+        "from": "G14",
+        "to": "G7",
+        "weight": 9563
+    }
+
+]

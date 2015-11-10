@@ -1,0 +1,46 @@
+[
+  {
+    "value": 12, 
+    "label": "A"
+  }, 
+  {
+    "value": 9, 
+    "label": "B"
+  }, 
+  {
+    "value": 11, 
+    "label": "C"
+  }, 
+  {
+    "value": 12, 
+    "label": "D"
+  }, 
+  {
+    "value": 19, 
+    "label": "E"
+  }, 
+  {
+    "value": 21, 
+    "label": "F"
+  }, 
+  {
+    "value": 29, 
+    "label": "G"
+  }, 
+  {
+    "value": 39, 
+    "label": "H"
+  }, 
+  {
+    "value": 41, 
+    "label": "I"
+  }, 
+  {
+    "value": 46, 
+    "label": "J"
+  }, 
+  {
+    "value": 49, 
+    "label": "K"
+  }
+]

@@ -65,6 +65,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         self.__xlabel = default.xlabel
         self.__ylabel = default.ylabel
         self.__label_size = default.label_size
+        self.__threshold = default.threshold
 
         self.__iconwidth = default.iconwidth
         self.__iconheight = default.iconheight
@@ -82,6 +83,9 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
 
     def set_title(self, title):
         self.__title = title
+
+    def set_threshold(self, threshold):
+        self.__threshold = threshold
 
     def getViewport(self):
         return self.__viewport
@@ -156,6 +160,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
                         't_colors': self.__colors,
                         't_barwidth': self.__barwidth,
                         't_verticalscale': self.__verticalscale,
+                        't_threshold' : self.__threshold,
                         't_div_hook': self._div_hook,
                         't_font_size': self.__font_size,
                         't_shape_rendering': self.__shape_rendering,

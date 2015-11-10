@@ -60,6 +60,7 @@ highlightfactor = 1.1
 minradius = 1
 maxradius = 50
 barwidth = 20
+threshold = 1
 
 ####################
 ## Axis Rendering ##
