@@ -22,7 +22,7 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-import defaults as default
+from . import defaults as default
 import types
 
 class BaseVisualization:
@@ -32,7 +32,7 @@ class BaseVisualization:
         self._div_hook = default.div_hook
 
     def set_div_hook(self, div_hook):
-        assert isinstance(div_hook, types.StringType)
+        assert isinstance(div_hook, str)
         self._div_hook = div_hook
 
     def get_js_code(self):
@@ -42,7 +42,7 @@ class BaseVisualization:
         raise NotImplementedError(self.implErrorMessage)
 
     def set_title(self, title):
-        assert isinstance(title, types.StringType)
+        assert isinstance(title, str)
         self._title = title
 
     def set_labels(self, labels):
