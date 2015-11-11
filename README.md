@@ -45,7 +45,7 @@ Now write a simple script to render a chart:
 	# in the same directory. Try to create JSON-Objekts as Key/Value
 	# pairs or use a JSON formatted String Object. CSV is also
 	# supported.
-	input_path = 'testdata.json'
+	input_path = 'samples/numerical.json'
 
 	###########################
 	### Basic usage of pive ###
