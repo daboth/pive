@@ -57,5 +57,8 @@ docs/_build/
 
 #Test Environment
 pive_test.py
+test_chart_creation.py
 output/
 testdata/
+test/
+tests/

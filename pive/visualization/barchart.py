@@ -46,7 +46,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         vv.ViewportVisualization.__init__(self)
 
         # Metadata
-        self.__title = 'barchart'
+        self._title = 'barchart'
         self.__template_name = 'barchart'
         self.__dataset = dataset
         realpath = os.path.dirname(os.path.realpath(__file__))
@@ -54,7 +54,6 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         self.__datakeys = []
         self.__version = default.p_version
 
-        print (self.__template_url)
 
         # Visualization properties.
         self.__width = width
@@ -82,7 +81,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         self.__verticalscale = 'linear'
 
     def set_title(self, title):
-        self.__title = title
+        self._title = title
 
     def set_threshold(self, threshold):
         self.__threshold = threshold
@@ -137,7 +136,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         self.__verticalscale = scale
 
     def create_html(self, template):
-        templateVars = {'t_title': self.__title,
+        templateVars = {'t_title': self._title,
                         't_div_hook': self._div_hook}
 
         outputText = template.render(templateVars)
@@ -190,22 +189,33 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         f.close()
 
 
+    def get_js_code(self):
+        dataset_url = '%s.json' % (self._title)
+        js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
+        js = self.create_js(js_template, dataset_url)
+        return js
+
+
+    def get_json_dataset(self):
+        return self.generate_visualization_dataset(self.__dataset)
+
+
     def create_visualization_files(self, destination_url):
         html_template = self.load_template_file('%shtml.jinja' % (self.__template_url))
         #css_template = self.load_template_file('%s/css.jinja' % (self.__template_url))
         js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
 
-        dataset_url = '%s.json' % (self.__title)
+        dataset_url = '%s.json' % (self._title)
         js = self.create_js(js_template, dataset_url)
         html = self.create_html(html_template)
         #css = self.create_css(css_template)
 
-        self.write_file(html, destination_url, '/%s.html' % (self.__title))
+        self.write_file(html, destination_url, '/%s.html' % (self._title))
         #self.write_file(css, destination_url, '/%s.css' % (self.__title))
-        self.write_file(js, destination_url, '/%s.js' % (self.__title))
+        self.write_file(js, destination_url, '/%s.js' % (self._title))
 
         visdata = self.generate_visualization_dataset(self.__dataset)
-        self.write_dataset_file(visdata, destination_url, '/%s.json' % (self.__title))
+        self.write_dataset_file(visdata, destination_url, '/%s.json' % (self._title))
 
     def setJumplength(self, jumplength):
         """Basic Method for viewport driven data."""

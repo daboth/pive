@@ -85,7 +85,7 @@ def types_matching_data_requirements(given_types, required_types):
     i = 0
 
     for item in given_types:
-        print ("item: %r     req: %r" % (item, required_types[i]))
+        #print ("item: %r     req: %r" % (item, required_types[i]))
 
         if item not in required_types[i]:
             matches = False

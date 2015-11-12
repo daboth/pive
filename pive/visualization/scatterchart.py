@@ -50,7 +50,7 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         realpath = os.path.dirname(os.path.realpath(__file__))
 
         # Metadata
-        self.__title = 'scatterchart'
+        self._title = 'scatterchart'
         self.__template_name = 'scatterchart'
         self.__dataset = dataset
         self.__template_url = '%s%s' % (realpath, default.template_path)
@@ -90,7 +90,7 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         self.__font_size = default.font_size
 
     def set_title(self, title):
-        self.__title = title
+        self._title = title
 
     def getViewport(self):
         return self.__viewport
@@ -128,6 +128,18 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         """Basic Method."""
         self.__colors = colors
 
+
+    def get_js_code(self):
+        dataset_url = '%s.json' % (self._title)
+        js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
+        js = self.create_js(js_template, dataset_url)
+        return js
+
+
+    def get_json_dataset(self):
+        return self.generate_visualization_dataset(self.__dataset)
+
+
     def generate_visualization_dataset(self, dataset):
         """Basic Method."""
         visdataset = []
@@ -157,7 +169,7 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
 
     def create_html(self, template):
-        templateVars = {'t_title': self.__title,
+        templateVars = {'t_title': self._title,
                         't_div_hook': self._div_hook}
 
         outputText = template.render(templateVars)
@@ -193,7 +205,6 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
                         't_axis_label_size' : self.__label_size}
 
         outputText = template.render(templateVars)
-        print (self.__datakeys)
         return outputText
 
     def write_file(self, output, destination_url, filename):
@@ -219,16 +230,16 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         html_template = self.load_template_file('%shtml.jinja' % (self.__template_url))
         js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
 
-        dataset_url = '%s.json' % (self.__title)
+        dataset_url = '%s.json' % (self._title)
 
         js = self.create_js(js_template, dataset_url)
         html = self.create_html(html_template)
 
-        self.write_file(html, destination_url, '/%s.html' % (self.__title))
-        self.write_file(js, destination_url, '/%s.js' % (self.__title))
+        self.write_file(html, destination_url, '/%s.html' % (self._title))
+        self.write_file(js, destination_url, '/%s.js' % (self._title))
 
         visdata = self.generate_visualization_dataset(self.__dataset)
-        self.write_dataset_file(visdata, destination_url, '/%s.json' % (self.__title))
+        self.write_dataset_file(visdata, destination_url, '/%s.json' % (self._title))
 
     def setJumplength(self, jumplength):
         """Basic Method for viewport driven data."""
@@ -279,7 +290,3 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         TEMPLATE_FILE = template_url
         template = templateEnv.get_template(TEMPLATE_FILE)
         return template
-
-	
-
- 

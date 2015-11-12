@@ -31,4 +31,4 @@ class CustomScalesVisualization:
 		pass
 		
 	def setScales(self, scales):
-		raise NotImplementedError(implErrorMessage)
+		raise NotImplementedError(self.implErrorMessage)

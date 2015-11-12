@@ -31,10 +31,10 @@ class ViewportVisualization:
 		pass
 		
 	def setIconProperties(self, iconwidth, iconheight, iconcolor, iconhighlight):
-		raise NotImplementedError(implErrorMessage)
+		raise NotImplementedError(self.implErrorMessage)
 
 	def setJumplength(self, jumplength):
-		raise NotImplementedError(implErrorMessage)
+		raise NotImplementedError(self.implErrorMessage)
 
 	def setViewport(self, viewport):
-		raise NotImplementedError(implErrorMessage)
+		raise NotImplementedError(self.implErrorMessage)
