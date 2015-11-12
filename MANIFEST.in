@@ -1,2 +1,2 @@
-include MANIFEST.in LICENSE README.txt
+include MANIFEST.in LICENSE README.md
 recursive-include pive *
