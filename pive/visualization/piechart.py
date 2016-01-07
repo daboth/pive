@@ -154,11 +154,11 @@ class Chart(bv.BaseVisualization):
         js = self.create_js(js_template, dataset_url)
         html = self.create_html(html_template)
 
-        self.write_file(html, destination_url, '/%s.html' % (self._title))
-        self.write_file(js, destination_url, '/%s.js' % (self._title))
+        self.write_file(html, destination_url, '%s%s.html' % (os.sep, self._title))
+        self.write_file(js, destination_url, '%s%s.js' % (os.sep, self._title))
 
         visdata = self.generate_visualization_dataset(self.__dataset)
-        self.write_dataset_file(visdata, destination_url, '/%s.json' % (self._title))
+        self.write_dataset_file(visdata, destination_url, '%s%s.json' % (os.sep, self._title))
 
 
     def set_height(self, height):
@@ -182,12 +182,3 @@ class Chart(bv.BaseVisualization):
     def set_dimension(self, width, height):
         self.set_width(width)
         self.set_height(height)
-
-    def load_template_file(self, template_url):
-        templateLoader = jinja2.FileSystemLoader(searchpath=[default.template_path, '/'])
-        print ("Opening template: %s" % (template_url))
-
-        templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = template_url
-        template = templateEnv.get_template(TEMPLATE_FILE)
-        return template
