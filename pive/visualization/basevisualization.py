@@ -23,13 +23,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 from . import defaults as default
-import types
+import jinja2
+import os
 
 class BaseVisualization:
     implErrorMessage = 'Method required and needs to be implemented.'
 
     def __init__(self):
         self._div_hook = default.div_hook
+        self.__template_url = ''
+        self.__template_name = ''
 
     def set_div_hook(self, div_hook):
         assert isinstance(div_hook, str)
@@ -85,4 +88,8 @@ class BaseVisualization:
         raise NotImplementedError(self.implErrorMessage)
 
     def load_template_file(self, template_url):
-        raise NotImplementedError(self.implErrorMessage)
+        path, filename = os.path.split(template_url)
+        template_loader= jinja2.FileSystemLoader(searchpath=[path, './'])
+        template_env = jinja2.Environment(loader=template_loader)
+        template = template_env.get_template(filename)
+        return template

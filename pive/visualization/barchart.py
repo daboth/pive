@@ -202,20 +202,17 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
 
     def create_visualization_files(self, destination_url):
         html_template = self.load_template_file('%shtml.jinja' % (self.__template_url))
-        #css_template = self.load_template_file('%s/css.jinja' % (self.__template_url))
         js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
 
         dataset_url = '%s.json' % (self._title)
         js = self.create_js(js_template, dataset_url)
         html = self.create_html(html_template)
-        #css = self.create_css(css_template)
 
-        self.write_file(html, destination_url, '/%s.html' % (self._title))
-        #self.write_file(css, destination_url, '/%s.css' % (self.__title))
-        self.write_file(js, destination_url, '/%s.js' % (self._title))
+        self.write_file(html, destination_url, '%s%s.html' % (os.sep, self._title))
+        self.write_file(js, destination_url, '%s%s.js' % (os.sep, self._title))
 
         visdata = self.generate_visualization_dataset(self.__dataset)
-        self.write_dataset_file(visdata, destination_url, '/%s.json' % (self._title))
+        self.write_dataset_file(visdata, destination_url, '%s%s.json' % (os.sep, self._title))
 
     def setJumplength(self, jumplength):
         """Basic Method for viewport driven data."""
@@ -258,11 +255,3 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         self.set_width(width)
         self.set_height(height)
 
-    def load_template_file(self, template_url):
-        templateLoader = jinja2.FileSystemLoader(searchpath=[default.template_path, '/'])
-        print ("Opening template: %s" % (template_url))
-
-        templateEnv = jinja2.Environment(loader=templateLoader)
-        TEMPLATE_FILE = template_url
-        template = templateEnv.get_template(TEMPLATE_FILE)
-        return template
