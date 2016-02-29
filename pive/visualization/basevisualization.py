@@ -33,6 +33,7 @@ class BaseVisualization:
         self._div_hook = default.div_hook
         self.__template_url = ''
         self.__template_name = ''
+        self._dataset_url = ''
 
     def set_div_hook(self, div_hook):
         assert isinstance(div_hook, str)
@@ -53,6 +54,10 @@ class BaseVisualization:
 
     def set_dataset(self, dataset):
         raise NotImplementedError(self.implErrorMessage)
+
+    def set_dataset_url(self, dataset_url):
+        assert isinstance(dataset_url, str)
+        self._dataset_url = dataset_url
 
     def set_chart_colors(self, colors):
         raise NotImplementedError(self.implErrorMessage)

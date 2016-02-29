@@ -45,6 +45,8 @@ class Chart(bv.BaseVisualization):
         self._title = 'piechart'
         self.__template_name = 'piechart'
         self.__dataset = dataset
+        self._dataset_url = ''
+
         realpath = os.path.dirname(os.path.realpath(__file__))
         self.__template_url = '%s%s' % (realpath, default.template_path)
         self.__datakeys = []
@@ -83,12 +85,11 @@ class Chart(bv.BaseVisualization):
             visdataset.append(visdatapoint)
         return visdataset
 
-    def write_dataset_file(self, dataset, destination_url, filename):
-        dest_file = '%s%s' % (destination_url, filename)
-        outp = open(dest_file, 'w')
+    def write_dataset_file(self, dataset, dataset_url):
+        outp = open(dataset_url, 'w')
         json.dump(dataset, outp, indent=2)
         outp.close()
-        print ('Writing: %s' % (dest_file))
+        print ('Writing: %s' % (dataset_url))
 
     def setScales(self, scales):
         self.__scales = scales
@@ -134,9 +135,8 @@ class Chart(bv.BaseVisualization):
 
 
     def get_js_code(self):
-        dataset_url = '%s.json' % (self._title)
         js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
-        js = self.create_js(js_template, dataset_url)
+        js = self.create_js(js_template, self._dataset_url)
         return js
 
 
@@ -149,16 +149,19 @@ class Chart(bv.BaseVisualization):
         html_template = self.load_template_file('%shtml.jinja' % (self.__template_url))
         js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
 
-        dataset_url = '%s.json' % (self._title)
+        # Default dataset url is used when nothing was explicitly passed.
+        if not self._dataset_url:
+            dataset_url = destination_url + '%s%s.json' % (os.sep, self._title)
+            self.set_dataset_url(dataset_url)
 
-        js = self.create_js(js_template, dataset_url)
+        js = self.create_js(js_template, self._dataset_url)
         html = self.create_html(html_template)
 
         self.write_file(html, destination_url, '%s%s.html' % (os.sep, self._title))
         self.write_file(js, destination_url, '%s%s.js' % (os.sep, self._title))
 
         visdata = self.generate_visualization_dataset(self.__dataset)
-        self.write_dataset_file(visdata, destination_url, '%s%s.json' % (os.sep, self._title))
+        self.write_dataset_file(visdata, self._dataset_url)
 
 
     def set_height(self, height):

@@ -2,6 +2,8 @@
 **Mahor changes**
 
  * Fixed path issues for windows operating systems while loading the templates.
+ * The path where the dataset is generated can now be explicitly passed (optional).
+ * Optionally returns the generated javascript code as a String only.
 
 **Minor changes**
 
@@ -12,8 +14,8 @@
 
  * Modified the chart generation. No more CSS documents will be generated. CSS styles
    are included within the javascript template directly.
- * Users can now omit a destination div container (div_hook) to tell pive where to put
-   the visualization.
+ * Users can now pass a destination div container (div_hook) to tell pive where to put
+   the visualization in a web document.
  * New environment function allows users to only obtain the plain javascript code and its data.
 
 **Minor changes**
