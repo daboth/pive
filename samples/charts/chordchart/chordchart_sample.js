@@ -27,7 +27,7 @@
 //Visit https://github.com/daboth/pive for more information.
 
 var width = 900;
-var height = 600;	
+var height = 600;
 var padding	= 60;
 var textpadding = 45;
 var elementFontSize = '1.25em';
@@ -92,11 +92,8 @@ var svg = d3.select(hashtag.concat(div_hook)).append("svg")
 var fill = ['#FF2C00', '#00B945', '#BF4930', '#238B49', '#A61D00', '#00782D', '#FF6140', '#37DC74', '#FF8B73', '#63DC90'];
 
 d3.json(url, function(data){
-
-	console.log(data.elements);
 	var chordElements = data.elements;
 	var matrix = data.matrix;
-	console.log(matrix)
 
 	function getColorIndex(index){
 			var colorindex = index;
@@ -106,12 +103,12 @@ d3.json(url, function(data){
 		   		colorindex = colorindex - fill.length;
 
 		   	}
-		   	
+
 		   	color = fill[colorindex];
 		   	return color;
-		}  	
+		}
 
-	function generateChord() {		
+	function generateChord() {
 
 		svg.selectAll("rect").remove();
 		svg.selectAll("g").remove();
@@ -122,7 +119,7 @@ d3.json(url, function(data){
 		var chord = d3.layout.chord()
 				.matrix(matrix)
 				.padding(0.05)
-				.sortSubgroups(d3.descending);		
+				.sortSubgroups(d3.descending);
 
 		//Select all groups from class "chordGroup"
 		var chordGroup = svg.selectAll("g.chordGroup")
@@ -136,7 +133,7 @@ d3.json(url, function(data){
 
 		chordGroup.append("path")
 			.attr("d", arc)
-			.style("fill", function(d) {						
+			.style("fill", function(d) {
 				return getColorIndex(d.index);
 			})
 			.style("stroke", function(d) {
@@ -177,11 +174,11 @@ d3.json(url, function(data){
 	        .attr("d", d3.svg.chord().radius(innerRadius))
 	        .style("fill", function(d) {
 	        	return chordColor(d);
-	        })	
+	        })
 	        .style("stroke", function(d) {
 	        	return chordColor(d);
-	        })			        
-	        .style("opacity", 0.75); 
+	        })
+	        .style("opacity", 0.75);
 
 		var ticks = svg.append("g").selectAll("g")
 				   .data(chord.groups)
@@ -193,7 +190,7 @@ d3.json(url, function(data){
 				      return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
 				          + "translate(" + outerRadius + ",0)";
 				    });
-				   
+
 
 		ticks.append("line")
 		    .attr("x1", 1)
@@ -219,12 +216,12 @@ d3.json(url, function(data){
 	            d.source.index : d.target.index);
 	        return getColorIndex(colorindex);
 	    }
-	     
+
 
 	function fade(opacity) {
 	    return function(d, i) {
 	        svg.selectAll(".chord path")
-	            .filter(function(d) {		                	
+	            .filter(function(d) {
 	                return d.source.index != i &&
 	                       d.target.index != i;
 	            })
@@ -245,10 +242,7 @@ d3.json(url, function(data){
 			detailheight = height / 2;
 
 			var color = getColorIndex(index);
-		
 			var dataset = matrix[index];
-
-			console.log(dataset);
 
 			var xScale = d3.scale.ordinal()
 					.domain(d3.range(dataset.length))
@@ -291,7 +285,7 @@ d3.json(url, function(data){
 			.attr("opacity", 1.0);
 
 		//Create Y axis
-		svg.append("g")					
+		svg.append("g")
 			.attr("opacity", 0.0)
 			.attr("class", "y axis")
 			.attr("transform", "translate(" + padding + ",0)")
@@ -305,7 +299,7 @@ d3.json(url, function(data){
 	       .enter()
 	       .append("rect")
 	       .attr("opacity", 0.0)
-	       .attr("fill", color)			      
+	       .attr("fill", color)
 		   .on("click", generateChord)
 	       .transition()
 	       .duration(transistionSpeed)
@@ -315,15 +309,15 @@ d3.json(url, function(data){
 	       		return xScale(i) + padding;
 	       })
 	       .attr("y", function (d) {
-	       		return detailheight - yScale(d) - padding; 
+	       		return detailheight - yScale(d) - padding;
 	       })
 	       .attr("width", xScale.rangeBand())
 	       .attr("height", function (d){
 	       		return yScale(d);
-	       });		        
+	       });
 	};
-	 
-	 
+
+
 	// Returns tick angles.
 	function chordTicks(d) {
 	  var k = (d.endAngle - d.startAngle) / d.value;
@@ -336,4 +330,4 @@ d3.json(url, function(data){
 	  });
 	};
 	generateChord();
-});	
+});

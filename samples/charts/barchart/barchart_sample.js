@@ -27,10 +27,10 @@
 //Visit https://github.com/daboth/pive for more information.
 
 var width = 900;
-var height = 600;	
+var height = 600;
 var padding	= 60;
 var labelsize = 18;
-var viewport = 50;	
+var viewport = 50;
 var jumplength = 10;
 var xlabel = 'X';
 var ylabel = 'Y';
@@ -101,9 +101,9 @@ d3.json(url, function(data){
 	var current_offset = 0;
 	//Define the viewport of the data. Only a slice of the full dataset is currently shown.
     var viewdata = dataset.slice(current_offset, current_offset + viewport);
-  
+
     var vertical_extent = d3.extent(dataset, function(d){ return d.value});
-    
+
     var yScale;
     var yAxisScale;
 
@@ -117,7 +117,7 @@ d3.json(url, function(data){
 
     scaleYAxis();
 
-    function scaleYAxis(){			    	
+    function scaleYAxis(){
     	//###################################
     	//######## scale the x-axis. ########
     	//###################################
@@ -138,40 +138,40 @@ d3.json(url, function(data){
 		    	yAxisScale = d3.scale.linear()
     			   .range([height - padding, padding + labelsize])
     			   .domain(vertical_extent);
-    		
+
     		} else {
     			yScale = d3.scale.log()
-        			   .range([padding + labelsize, height - padding])         			   
+        			   .range([padding + labelsize, height - padding])
         			   .domain(vertical_extent);
 		    	yAxisScale = d3.scale.log()
-        			   .range([height - padding, padding + labelsize])         			   
+        			   .range([height - padding, padding + labelsize])
         			   .domain(vertical_extent);
     		}
 
-    		
-    	} else if (verticalscale.substring(0,3) == 'pow') {	
-    		
+
+    	} else if (verticalscale.substring(0,3) == 'pow') {
+
     		//The exponent of the power scale is indicated by a number
     		//following the 'pow', e.g. 'pow2'.
     		exp = parseInt(scales[1].substring(3, scales[1].length));
-    		
+
     		//Provide a power scaling.
     		yScale = d3.scale.pow()
     				   .exponent(exp)
-        			   .range([padding + labelsize, height - padding])		   
+        			   .range([padding + labelsize, height - padding])
         			   .domain(vertical_extent);
 		    yAxisScale = d3.scale.pow()
     				   .exponent(exp)
-        			   .range([height - padding, padding + labelsize])		   
+        			   .range([height - padding, padding + labelsize])
         			   .domain(vertical_extent);
 	    };
     };
 
-    
-	
-	
+
+
+
 	var svg = d3.select(hashtag.concat(div_hook)).append("svg")
-				.attr("width", width)							
+				.attr("width", width)
 				.attr("height", height);
 
 	var tooltip = d3.select(hashtag.concat(div_hook)).append("div")
@@ -191,19 +191,19 @@ d3.json(url, function(data){
 	};
 
 	function initializeYAxis() {
-		yaxis.orient('left')	    			
-    		 .scale(yAxisScale); 
+		yaxis.orient('left')
+    		 .scale(yAxisScale);
 	};
 
-    initializeXAxis();		
-    initializeYAxis();	
+    initializeXAxis();
+    initializeYAxis();
 
     function barUpdate() {
     	var bars = svg.selectAll("rect").data(viewdata);
 
         bars.enter()
 	        .append("rect")
-	        .attr("opacity", 0.0);	    
+	        .attr("opacity", 0.0);
 
         bars.exit().remove();
 
@@ -233,16 +233,15 @@ d3.json(url, function(data){
 	        	var ty = d3.mouse(this)[1];
 	        	d3.select(this).transition()
 	        		           .attr("opacity", 0.5);
-	            console.log(viewdata[i].label);
 	        	showTooltip([d.value, viewdata[i].label], [tx, ty], i);
 	        })
         	.on("mouseout", function(){
 		    	hideTooltip();
 		    	d3.select(this).transition()
         		           .attr("opacity", 1.0);
-		    });	 
+		    });
 
-        
+
     }
 
     barUpdate();
@@ -252,12 +251,12 @@ d3.json(url, function(data){
 			   .attr('transform', 'translate(0, ' + (height - padding - labelsize) + ')')
 			   .data(viewdata)
 			   .call(xaxis)
-			   .selectAll("text")  
+			   .selectAll("text")
 	            .style("text-anchor", "end")
 	            .attr("dx", "-.8em")
 	            .attr("dy", ".15em")
 	            .attr("transform", function(d) {
-	                return "rotate(" + tickrotation + ")" 
+	                return "rotate(" + tickrotation + ")"
 	                });
 
 	var ya = svg.append('g')
@@ -289,7 +288,7 @@ d3.json(url, function(data){
 
 	function drawButtons(){
 		//Append the buttons.
-	    var buttons = svg.append("g")			    	
+	    var buttons = svg.append("g")
 	    				 .attr("class", "button")
 
 	    var vertical_center = (height / 2) - (padding / 2) - (iconheight / 2);
@@ -299,11 +298,11 @@ d3.json(url, function(data){
 	    var left_translation = 'translate(' + (iconwidth + 10 + labelsize) + ',' + (vertical_center) + ')';
 
 		//Append the right arrow button and apply its transformation.
-		buttons.append("path")		    		
-			.attr('d', 'm 0 0 0 ' + iconheight + ' ' + iconwidth + ' -' + iconheight / 2 + 'z')			       
-	        .attr('transform', right_translation)			        
+		buttons.append("path")
+			.attr('d', 'm 0 0 0 ' + iconheight + ' ' + iconwidth + ' -' + iconheight / 2 + 'z')
+	        .attr('transform', right_translation)
 	        .attr('fill', iconcolor)
-	        .on("click", function() {					  		
+	        .on("click", function() {
 			  		forwardData();
 			})
 			.on('mouseover', function() {
@@ -312,13 +311,13 @@ d3.json(url, function(data){
 			.on('mouseout', function() {
 				d3.select(this).attr('fill', iconcolor);
 			});
-		
+
 		//Append the left arrow button and apply its transformation.
-		buttons.append("path")		    		
+		buttons.append("path")
 			.attr('d', 'm 0 0 0 ' + iconheight + ' -' + iconwidth + ' -' + iconheight / 2 + 'z')
 	        .attr('transform',  left_translation)
 	        .attr('fill', iconcolor)
-	        .on("click", function() {					  		
+	        .on("click", function() {
 			  		backwardData();
 			})
 			.on('mouseover', function() {
@@ -326,7 +325,7 @@ d3.json(url, function(data){
 			})
 			.on('mouseout', function() {
 				d3.select(this).attr('fill', iconcolor);
-			});	
+			});
 
 	}
 
@@ -335,67 +334,67 @@ d3.json(url, function(data){
 	} else {
 		drawButtons();
 	}
-	
+
 	function forwardData() {
 		current_offset += jumplength;
-		
+
 		if ((current_offset + viewport) > dataset.length) {
 			viewdata = dataset.slice(current_offset, dataset.length);
 			current_offset -= jumplength;
 		} else {
 			viewdata = dataset.slice(current_offset, current_offset + viewport);
 		};
-		
+
 	    barScale.domain(viewdata.map(function(d){
 	    	return d.label;
-	    }));	  
+	    }));
 
-	    updateAxes();	
+	    updateAxes();
 	    barUpdate();
 
 	};
 
-	
+
 	function backwardData() {
 		current_offset -= jumplength;
-		
+
 		if (current_offset < 0) {
 			viewdata = dataset.slice(0, 0 + viewport);
 			current_offset = 0;
 		} else {
 			viewdata = dataset.slice(current_offset, current_offset + viewport);
 		};
-		
+
 	    barScale.domain(viewdata.map(function(d){
 	    	return d.label;
-	    }));	  
+	    }));
 
 	    updateAxes();
-	    barUpdate();		
+	    barUpdate();
 	};
-	
-	
+
+
 	function updateAxes(){
 
 		xaxis.tickValues(barScale.domain().filter(function(d, i) { return !(i % filter); }));
 
 		svg.select(".x.axis")
-    		.transition()    		
+    		.transition()
     		.duration(250)
     		.call(xaxis)
 
 		svg.select(".y.axis")
-    		.transition()    		
+    		.transition()
     		.duration(250)
     		.call(yaxis)
-    		
+
 		svg.select(".x.axis")
-			.selectAll("text")  
+			.selectAll("text")
             .style("text-anchor", "end")
             .attr("dx", "-.8em")
             .attr("dy", ".15em")
             .attr("transform", function(d) {
-                return "rotate(" + tickrotation + ")" 
+                return "rotate(" + tickrotation + ")"
             });
 
 	};
@@ -409,11 +408,11 @@ d3.json(url, function(data){
 		   		colorindex = colorindex - colors.length;
 
 		   	}
-		   	
+
 		   	color = colors[colorindex];
 		   	return color;
-		}  	
-    
+		}
+
 
    function hideTooltip(){
     	tooltip.transition()
@@ -423,16 +422,15 @@ d3.json(url, function(data){
     }
 
     function showTooltip(values, position, accessor){
-	    	//console.log("tooltip")
 	    	var keyindex = parseInt(accessor) + 1;
-	    	
+
 	    	tooltip.text(values[1] + ": " + values[0])
 	    		   .style("left", (position[0] + "px"))
 	    		   .transition()
 	    		   .delay(600)
 	    		   .duration(400)
 	    		   .style("opacity", 1.0)
-	    		   .style("position", "absolute")	    		   
+	    		   .style("position", "absolute")
 	    		   .style("background-color", getColorIndex(accessor))
 	    		   .style("top", (position[1] + "px"));
 

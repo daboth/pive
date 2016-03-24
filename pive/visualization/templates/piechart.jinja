@@ -27,7 +27,7 @@
 //Visit https://github.com/daboth/pive for more information.
 
 var width = {{ t_width }};
-var height = {{ t_height }};	
+var height = {{ t_height }};
 var padding	= {{ t_padding }};
 var labelsize = 16;
 var datakeys = {{ t_datakeys }};
@@ -77,8 +77,6 @@ root_div.appendChild(style);
 d3.json(url, function(data){
 	//The complete dataset.
 	var dataset = data;
-	console.log(dataset);
-	console.log([dataset]);
 
 	var radius;
 	if (width < height){
@@ -104,7 +102,7 @@ d3.json(url, function(data){
 	{# for later reference.                                                                          #}
 	var svg = d3.select(hashtag.concat(div_hook)).append("svg")
 				.datum(dataset)
-				.attr("width", width)							
+				.attr("width", width)
 				.attr("height", height);
 
     var arc = d3.svg.arc().outerRadius(radius);
@@ -137,7 +135,7 @@ d3.json(url, function(data){
         		           .attr("opacity", 1.0);
 		    });
 
-	
+
 
 	function getColorIndex(index){
 			var colorindex = index;
@@ -146,12 +144,12 @@ d3.json(url, function(data){
 		   	while (colorindex > colors.length - 1) {
 		   		colorindex = colorindex - colors.length;
 		   	}
-		   	
+
 		   	color = colors[colorindex];
 		   	return color;
-		}       	
+		}
 
-   
+
    function hideTooltip(){
     	tooltip.transition()
     	.duration(200)
@@ -160,14 +158,14 @@ d3.json(url, function(data){
     }
 
     function showTooltip(values, position, accessor){
-	    	
+
 	    	tooltip.html((values[1] + ": " + values[0] + "<br><br><center>" + percentformat(values[0] / total)))
 	    		   .style("left", ((position[0] + radius) +  "px"))
 	    		   .transition()
 	    		   .delay(600)
 	    		   .duration(400)
 	    		   .style("opacity", 1.0)
-	    		   .style("position", "absolute")	    		   
+	    		   .style("position", "absolute")
 	    		   .style("background-color", getColorIndex(accessor))
 	    		   .style("top", ((position[1] + radius) + "px"));
 
