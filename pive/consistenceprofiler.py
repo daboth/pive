@@ -23,6 +23,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+# The visualization types determine which charts can be generated out of
+# the given dataset.
+
+from dateutil.parser import parse
+
+VISTYPE_STRING = 0;
+VISTYPE_NUMERICAL = 1;
+VISTYPE_DATETIME = 2;
+
+
 def get_datapoint_types(datapoint):
     """Determines the datas visualization-types of a given datapoint.
 	Valid visualization-types are 'number', 'string' and 'time'"""
@@ -30,26 +40,50 @@ def get_datapoint_types(datapoint):
     for key in list(datapoint.keys()):
 
         item = datapoint[key]
-        if str(key).endswith("date") or str(key).endswith("time"):
-            types.append("time")
 
-        elif is_float(item) or is_int(item):
+        #If the datapoint contains a float or int it will
+        #be considered as a numerical datapoint.
+        if is_float(item) or is_int(item):
             types.append("number")
 
-        # Python 3 string determination.
-        elif isinstance(item, (str)):
-            types.append("string")
-        # Python 2.7 workaround to determine strings.
-        # Basestring was deprecated in Python 3.
-        else:
-            try:
-                if isinstance(item, basestring):
-                    types.append("string")
-            except TypeError:
-                pass
-
+        #If the item is a string, it may also be formatted as
+        #a datetime item.
+        if is_string(item):
+            if is_date(item):
+                types.append("time")
+            else:
+                types.append("string")
+    
     return types
 
+
+def is_string(item):
+    """Determines if the item is a string type for Python 3 and
+    Python 2.7."""
+    is_string = False;
+
+    # Python 3 string determination.
+    if isinstance(item, (str)):
+        is_string = True;
+
+    # Python 2.7 workaround to determine strings.
+    # Basestring was deprecated in Python 3.
+    else:
+        try:
+            if isinstance(item, basestring):
+                is_string = True;
+        except TypeError:
+            pass
+
+    return is_string
+
+def is_date(item):
+    """Checks if the item is a date."""
+    try:
+        parse(item)
+        return True
+    except ValueError:
+        return False
 
 def is_float(value):
     try:
@@ -81,4 +115,3 @@ def is_dataset_consistent(input_data):
             if previous != current:
                 return False
     return True
-
