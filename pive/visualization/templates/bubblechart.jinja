@@ -552,7 +552,7 @@ d3.json(url, function(data){
 
 
 
-
+        var current_r = 0;
 
 	    svg.selectAll("circle")
 	    	.on("mouseover", function(){
@@ -561,6 +561,7 @@ d3.json(url, function(data){
 		    	var circlex = d3.select(this).attr("cx");
 		    	var circley = d3.select(this).attr("cy");
 		    	var accessor = d3.select(this).attr("y_accessor");
+		    	current_r = d3.select(this).attr("r");
 
 
 		    	var values = [xvalue, yvalue];
@@ -568,22 +569,23 @@ d3.json(url, function(data){
 		    	var coords = d3.mouse(this);
 
 		    	d3.select(this).transition()
-		    	.duration(500)
+		    	.duration(200)
 		    	.attr('opacity', (circleopacity / 2))
-		    	.attr('r', d3.select(this).attr('r') * highlightfactor)
+		    	.attr('r', current_r * highlightfactor)
 		    	.each('end', showTooltip(coords, values, position, accessor));
 		    })
 		    .on("mouseout", function(){
 		    	d3.select(this).transition()
 		    	.attr('opacity', circleopacity)
-		    	.attr('r', d3.select(this).attr('r') / highlightfactor);
+		    	//.attr('r', d3.select(this).attr('r') / highlightfactor);
+		    	.attr('r', current_r);
 		    	hideTooltip();
 		    });
     };
 
    function hideTooltip(){
     	tooltip.transition()
-    	.duration(200)
+    	.duration(100)
     	.style("opacity", 0.0)
     	.style("top", 0 + "px");
     }
