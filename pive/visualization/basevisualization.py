@@ -31,9 +31,10 @@ class BaseVisualization:
 
     def __init__(self):
         self._div_hook = default.div_hook
-        self.__template_url = ''
-        self.__template_name = ''
+        self._template_url = ''
+        self._template_name = ''
         self._dataset_url = ''
+        self._title = '2'
 
     def set_div_hook(self, div_hook):
         assert isinstance(div_hook, str)
@@ -81,7 +82,31 @@ class BaseVisualization:
         raise NotImplementedError(self.implErrorMessage)
 
     def create_visualization_files(self, destination_url):
-        raise NotImplementedError(self.implErrorMessage)
+
+        html_template = self.load_template_file('%shtml.jinja' % (self._template_url))
+        js_template = self.load_template_file('%s%s.jinja' % (self._template_url, self._template_name))
+
+
+
+        # Default dataset url is used when nothing was explicitly passed.
+        if not self._dataset_url:
+            dataset_url = destination_url + '%s%s.json' % (os.sep, self._title)
+            self.set_dataset_url(dataset_url)
+            # By default, the dataset is stored directly in the visualizations javascript path,
+            # the templating engine then only references the relative path.
+            js = self.create_js(js_template, '%s.json' % (self._title))
+        else:
+            # When a dataset url was passed, the visualization references
+            # this as the absolute path to the dataset.
+            js = self.create_js(js_template, self._dataset_url)
+
+        html = self.create_html(html_template)
+
+        self.write_file(html, destination_url, '%s%s.html' % (os.sep, self._title))
+        self.write_file(js, destination_url, '%s%s.js' % (os.sep, self._title))
+
+        visdata = self.generate_visualization_dataset(self._dataset)
+        self.write_dataset_file(visdata, self._dataset_url)
 
     def set_height(self, height):
         raise NotImplementedError(self.implErrorMessage)

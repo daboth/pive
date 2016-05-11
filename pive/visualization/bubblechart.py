@@ -50,12 +50,12 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
         # Metadata
         self._title = 'bubblechart'
-        self.__template_name = 'bubblechart'
-        self.__dataset = dataset
+        self._template_name = 'bubblechart'
+        self._dataset = dataset
         self._dataset_url = ''
 
         realpath = os.path.dirname(os.path.realpath(__file__))
-        self.__template_url = '%s%s' % (realpath, default.template_path)
+        self._template_url = '%s%s' % (realpath, default.template_path)
         self.__datakeys = []
         self.__version = default.p_version
 
@@ -92,8 +92,8 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
         self.__line_stroke = default.line_stroke
         self.__font_size = default.font_size
 
-    def set_title(self, title):
-        self._title = title
+    # def set_title(self, title):
+    #     self._title = title
 
     def getViewport(self):
         return self.__viewport
@@ -228,33 +228,39 @@ class Chart(bv.BaseVisualization, csv.CustomScalesVisualization, vv.ViewportVisu
 
 
     def get_js_code(self):
-        js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
+        js_template = self.load_template_file('%s%s.jinja' % (self._template_url, self._template_name))
         js = self.create_js(js_template, self._dataset_url)
         return js
 
 
     def get_json_dataset(self):
-        return self.generate_visualization_dataset(self.__dataset)
+        return self.generate_visualization_dataset(self._dataset)
 
 
-    def create_visualization_files(self, destination_url):
-
-        html_template = self.load_template_file('%shtml.jinja' % (self.__template_url))
-        js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
-
-        # Default dataset url is used when nothing was explicitly passed.
-        if not self._dataset_url:
-            dataset_url = destination_url + '%s%s.json' % (os.sep, self._title)
-            self.set_dataset_url(dataset_url)
-
-        js = self.create_js(js_template, self._dataset_url)
-        html = self.create_html(html_template)
-
-        self.write_file(html, destination_url, '%s%s.html' % (os.sep, self._title))
-        self.write_file(js, destination_url, '%s%s.js' % (os.sep, self._title))
-
-        visdata = self.generate_visualization_dataset(self.__dataset)
-        self.write_dataset_file(visdata, self._dataset_url)
+    # def create_visualization_files(self, destination_url):
+    #
+    #     html_template = self.load_template_file('%shtml.jinja' % (self.__template_url))
+    #     js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
+    #
+    #     # Default dataset url is used when nothing was explicitly passed.
+    #     if not self._dataset_url:
+    #         dataset_url = destination_url + '%s%s.json' % (os.sep, self._title)
+    #         self.set_dataset_url(dataset_url)
+    #         # By default, the dataset is stored directly in the visualizations javascript path,
+    #         # the templating engine then only references the relative path.
+    #         js = self.create_js(js_template, '%s.json' % (self._title))
+    #     else:
+    #         # When a dataset url was passed, the visualization references
+    #         # this as the absolute path to the dataset.
+    #         js = self.create_js(js_template, self._dataset_url)
+    #
+    #     html = self.create_html(html_template)
+    #
+    #     self.write_file(html, destination_url, '%s%s.html' % (os.sep, self._title))
+    #     self.write_file(js, destination_url, '%s%s.js' % (os.sep, self._title))
+    #
+    #     visdata = self.generate_visualization_dataset(self.__dataset)
+    #     self.write_dataset_file(visdata, self._dataset_url)
 
     def setJumplength(self, jumplength):
         """Basic Method for viewport driven data."""

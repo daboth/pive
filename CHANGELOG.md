@@ -1,9 +1,11 @@
 ### 0.3.4
-**Mahor changes**
+**Major changes**
 
  * Fixed path issues for windows operating systems while loading the templates.
  * The path where the dataset is generated can now be explicitly passed (optional).
  * Optionally returns the generated javascript code as a String only.
+ * Datetime datapoints are now validated automatically while determining the visualization types.
+   Iso formatted dates and Unix-Timestamps need to be provided as Strings. 
 
 **Minor changes**
 
