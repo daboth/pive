@@ -47,12 +47,12 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
 
         # Metadata
         self._title = 'barchart'
-        self.__template_name = 'barchart'
-        self.__dataset = dataset
+        self._template_name = 'barchart'
+        self._dataset = dataset
         self._dataset_url = ''
 
         realpath = os.path.dirname(os.path.realpath(__file__))
-        self.__template_url = '%s%s' % (realpath, default.template_path)
+        self._template_url = '%s%s' % (realpath, default.template_path)
         self.__datakeys = []
         self.__version = default.p_version
 
@@ -191,18 +191,18 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
 
 
     def get_js_code(self):
-        js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
+        js_template = self.load_template_file('%s%s.jinja' % (self._template_url, self._template_name))
         js = self.create_js(js_template, self._dataset_url)
         return js
 
 
     def get_json_dataset(self):
-        return self.generate_visualization_dataset(self.__dataset)
+        return self.generate_visualization_dataset(self._dataset)
 
 
     def create_visualization_files(self, destination_url):
-        html_template = self.load_template_file('%shtml.jinja' % (self.__template_url))
-        js_template = self.load_template_file('%s%s.jinja' % (self.__template_url, self.__template_name))
+        html_template = self.load_template_file('%shtml.jinja' % (self._template_url))
+        js_template = self.load_template_file('%s%s.jinja' % (self._template_url, self._template_name))
 
         # Default dataset url is used when nothing was explicitly passed.
         if not self._dataset_url:
@@ -215,7 +215,7 @@ class Chart(bv.BaseVisualization, vv.ViewportVisualization):
         self.write_file(html, destination_url, '%s%s.html' % (os.sep, self._title))
         self.write_file(js, destination_url, '%s%s.js' % (os.sep, self._title))
 
-        visdata = self.generate_visualization_dataset(self.__dataset)
+        visdata = self.generate_visualization_dataset(self._dataset)
         self.write_dataset_file(visdata, self._dataset_url)
 
     def setJumplength(self, jumplength):
