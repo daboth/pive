@@ -22,19 +22,25 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+from abc import ABCMeta, abstractmethod
+
 
 class ViewportVisualization:
+    __metaclass__ = ABCMeta
+    implErrorMessage = 'Method required and needs to be implemented.'
 
-	implErrorMessage = 'Method required and needs to be implemented.'
+    @abstractmethod
+    def __init__(self):
+        pass
 
-	def __init__(self):
-		pass
-		
-	def setIconProperties(self, iconwidth, iconheight, iconcolor, iconhighlight):
-		raise NotImplementedError(self.implErrorMessage)
+    @abstractmethod
+    def setIconProperties(self, iconwidth, iconheight, iconcolor, iconhighlight):
+        raise NotImplementedError(self.implErrorMessage)
 
-	def setJumplength(self, jumplength):
-		raise NotImplementedError(self.implErrorMessage)
+    @abstractmethod
+    def setJumplength(self, jumplength):
+        raise NotImplementedError(self.implErrorMessage)
 
-	def setViewport(self, viewport):
-		raise NotImplementedError(self.implErrorMessage)
+    @abstractmethod
+    def setViewport(self, viewport):
+        raise NotImplementedError(self.implErrorMessage)
