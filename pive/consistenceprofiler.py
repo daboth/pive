@@ -27,6 +27,7 @@
 # the given dataset.
 
 from dateutil.parser import parse
+import sys
 
 VISTYPE_STRING = 0;
 VISTYPE_NUMERICAL = 1;
@@ -62,13 +63,14 @@ def is_string(item):
     Python 2.7."""
     is_string = False
 
+    if sys.version_info[0] >= 3:
     # Python 3 string determination.
-    if isinstance(item, str):
-        is_string = True
+        if isinstance(item, str):
+            is_string = True
 
     # Python 2.7 workaround to determine strings.
-    # Basestring was deprecated in Python 3.
-    else:
+    # Basestring was deprecated with Python 3.
+    if sys.version_info[0] < 3:
         try:
             if isinstance(item, basestring):
                 is_string = True
