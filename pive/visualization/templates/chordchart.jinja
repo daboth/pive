@@ -75,7 +75,7 @@ root_div.appendChild(style);
 {# Begin of D3.js Visualization. #}
 {# ############################# #}
 
-var innerRadius = Math.min(width, height) * .34,
+var innerRadius = Math.min(width, height) * .32,
 	outerRadius = innerRadius * 1.2,
 	labelFont = "Helvetica",
 	transistionSpeed = 500;
@@ -115,7 +115,6 @@ d3.json(url, function(data){
 		svg.selectAll("g").remove();
 
 		svg.attr("transform", "translate(" + width/2 + "," + height/2 + ")");
-
 
 		var chord = d3.layout.chord()
 				.matrix(matrix)
